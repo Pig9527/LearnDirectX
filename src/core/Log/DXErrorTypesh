@@ -1,0 +1,55 @@
+#pragma once
+
+#include "pheader.h"
+
+namespace gfx
+{
+
+  enum class DXErrorSeverity : uint8_t
+  {
+    Fatal,
+    Warning,
+    Error,
+    Info
+  };
+
+  enum class DXErrorCategory : uint8_t
+  {
+    Device,
+    Resource,
+    Shader,
+    Pipeline,
+    Input,
+    Output,
+    Driver,
+    Unknown
+  };
+
+  struct DXErrorInfo
+  {
+
+    DXErrorInfo() = delete;
+    DXErrorInfo(HRESULT hr_, const std::string &msg_, const std::string &file_, const std::string &func_, int line_);
+
+    DXErrorInfo(DXErrorInfo &&rhs) noexcept = default;
+    DXErrorInfo &operator=(DXErrorInfo &&rhs) noexcept = default;
+
+    DXErrorInfo(const DXErrorInfo &rhs) = delete;
+    DXErrorInfo &operator=(const DXErrorInfo &rhs) = delete;
+
+
+    static DXErrorCategory GetCategory(HRESULT hr);
+    static DXErrorSeverity GetSeverity(HRESULT hr);
+
+    HRESULT hr = {S_OK};
+    std::string message;
+    std::string file;
+    std::string function;
+    int line{0};
+    DXErrorSeverity severity{DXErrorSeverity::Info};
+    DXErrorCategory category{DXErrorCategory::Unknown};
+    std::chrono::system_clock::time_point timeStamp;
+    uint64_t errorCode{0};
+  };
+
+} // namespace gfx
