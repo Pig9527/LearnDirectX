@@ -74,6 +74,15 @@ void gfx::Model<T>::processMesh(aiMesh *mesh, const aiScene *scene)
       vertex.uv = texCoord;
     }
 
+    if (mesh->HasNormals())
+    {
+      DirectX::XMFLOAT3 normal;
+      normal.x = mesh->mNormals[i].x;
+      normal.y = mesh->mNormals[i].y;
+      normal.z = mesh->mNormals[i].z;
+      vertex.normal = normal;
+    }
+
     vertex.color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     m_vertices.push_back(vertex);
   }

@@ -30,7 +30,7 @@ void gfx::ImguiLayer::Render()
   ImGui_ImplWin32_NewFrame();
 
   ImGui::NewFrame();
-  static bool bAnimate = true;
+  static bool bAnimate = false;
   if (bAnimate)
   {
     phi += 0.003f * 0.016f;
@@ -56,7 +56,16 @@ void gfx::ImguiLayer::Render()
   ImGui::Text("FOV: %.2f degrees", DirectX::XMConvertToDegrees(fov));
   ImGui::SliderFloat("##3", &fov, DirectX::XM_PIDIV4, DirectX::XM_PI / 3 * 2, "");
 
-  ImGui::ColorEdit4("color", &m_color.x);
+  ImGui::Text("Material");
+  ImGui::SliderFloat3("ambient",&ambient.x,0.0,1.0);
+  ImGui::SliderFloat3("diffuse",&diffuse.x, 0.0, 1.0);
+  ImGui::SliderFloat3("specular",&specular.x, 0.0, 1.0);
+  ImGui::SliderFloat("speuclarPower",&specularPower,0.001f,10.0f,"");
+  
+  ImGui::Text("light");
+  ImGui::DragFloat3("Dir",&lightDir.x);
+  ImGui::ColorEdit3("color",&lightColor.x);
+  ImGui::SliderFloat3("eyePos",&eyePos.x,-10.0,10.0);
   ImGui::End();
 
   ImGui::Render();

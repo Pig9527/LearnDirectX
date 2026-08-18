@@ -29,10 +29,10 @@ namespace gfx
       std::shared_ptr<gfxConstacntBufferManager> m_update2GPU;
       std::shared_ptr<ImguiLayer> m_layer;
       std::shared_ptr<gfxShaderProgram> m_shader;
-      std::shared_ptr<gfxLayout<VertexPosColorUv>> m_layout;
+      std::shared_ptr<gfxLayout<VertexPosPosNormalUv>> m_layout;
 
       std::unique_ptr<gfxTexture> m_texture;
       std::unique_ptr<gfxRenderStateCache> m_renderState;
-      std::unique_ptr<Model<VertexPosColorUv>> m_model;
+      std::unique_ptr<Model<VertexPosPosNormalUv>> m_model;
    };
 } // namespace gfx

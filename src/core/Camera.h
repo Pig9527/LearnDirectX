@@ -11,7 +11,8 @@ namespace gfx
 
       void CalculateProjectView();
       DirectX::XMMATRIX& GetProjectVeiwMatrix() {return m_projectViewMatrix;}
-      
+      DirectX::XMMATRIX& GetProjectMatrix() {return m_projectMatrix;}
+      DirectX::XMMATRIX& GetViewMatrix() {return m_viewMatrix;}
     private:
       DirectX::XMMATRIX m_projectMatrix;
       DirectX::XMMATRIX m_viewMatrix;

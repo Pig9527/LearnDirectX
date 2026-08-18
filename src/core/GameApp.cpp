@@ -24,17 +24,17 @@ void gfx::GameApp::Init()
   m_shader->Init("assets/shader/baseVertex.hlsl", "assets/shader/basePixel.hlsl");
   m_shader->Bind();
 
-  m_layout = std::make_unique<gfxLayout<VertexPosColorUv>>();
+  m_layout = std::make_unique<gfxLayout<VertexPosPosNormalUv>>();
   m_layout->CreateLayout(m_shader->GetVertexShader()->GetBlod());
 
-  m_model = std::make_unique<Model<VertexPosColorUv>>();
+  m_model = std::make_unique<Model<VertexPosPosNormalUv>>();
  // m_model->LoadModelFromFile("assets/model/BOSS_model_final.fbx");
-  m_model->LoadModelFromFile("assets/backpack/backpack.obj");
+  m_model->LoadModelFromFile("assets/model/dragon.obj");
   m_model->Create();
 
 
   TextureDesc desc;
-  desc.filePath = "assets/backpack/diffuse.jpg";
+  desc.filePath = "assets/backpack/diffuse1.jpg";
   m_texture = std::make_unique<gfxTexture>(desc);
   m_texture->Create();
 
@@ -85,12 +85,29 @@ void gfx::GameApp::Render()
   DirectX::XMMATRIX mvp = m_camera->GetProjectVeiwMatrix() * mod;
   PerFrameData data;
   data.mvp = mvp;
+  data.viewProject = m_camera->GetProjectVeiwMatrix();
+  data.world = mod;
+  data.worldInvTranspone = DirectX::XMMatrixTranspose(mod);
+  data.view = m_camera->GetViewMatrix();
+  data.project = m_camera->GetProjectMatrix();
+
   m_update2GPU->UploadPerFrameToVS(data);
   MaterialData material;
-  material.color = m_layer->GetColor();
+  material.diffuse = m_layer->diffuse;
+  material.specular = m_layer->specular;
+  material.specularPower = m_layer->specularPower;
+
+  material.ambient = m_layer->ambient;
 
   m_update2GPU->UploadMaterialToPS(material);
 
+
+  LightData light;
+  light.lightDir = m_layer->lightDir;
+  light.lightColor = m_layer->lightColor;
+  light.eyePos = m_layer->eyePos;
+
+  m_update2GPU->UploadLightToPS(light);
   uint32_t indexCnt = m_model->GetIndexCnt();
   Renderer::DrawIndex(indexCnt);
 
