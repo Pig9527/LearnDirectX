@@ -13,6 +13,7 @@ namespace gfx
   struct TextureDesc
   {
     std::string filePath;
+    int slot = 1;
     TextureSpace textureSpace = TextureSpace::SRGB;
 
     bool operator==(const TextureDesc &rhs) const
@@ -28,6 +29,7 @@ namespace gfx
     ~gfxTexture();
 
     void Create();
+    void Bind();
 
   private:
     std::string m_filePath;
@@ -36,6 +38,7 @@ namespace gfx
     int32_t m_Channels;
     int32_t m_width;
     int32_t m_height;
+    int m_slot;
     comptr<ID3D11Texture2D> m_pTexture;
     comptr<ID3D11ShaderResourceView> m_pShaderView;
   };

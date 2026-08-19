@@ -12,6 +12,7 @@
 #include "Event/Event.h"
 #include "Event/KeyEvent.h"
 #include "Event/MouseEvent.h"
+#include "gfxWhiteTexture.h"
 
 namespace gfx
 {
@@ -43,6 +44,7 @@ namespace gfx
 
       std::unique_ptr<NativeWindow> m_window;
       std::unique_ptr<gfxTexture> m_texture;
+      std::unique_ptr<gfxWhiteTexture> m_Deftexture;
       std::unique_ptr<gfxRenderStateCache> m_renderState;
       std::unique_ptr<Model<VertexPosPosNormalUv>> m_model;
    };

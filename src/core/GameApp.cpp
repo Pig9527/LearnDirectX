@@ -30,6 +30,7 @@ void gfx::GameApp::Init()
   m_renderState = std::make_unique<gfxRenderStateCache>();
   m_renderState->Init();
 
+
   std::wostringstream vertexPath(TEXT("assets/shader/baseVertex.hlsl"));
   std::wostringstream PixelPath(TEXT("assets/shader/basePixel.hlsl"));
   m_shader = std::make_shared<gfxShaderProgram>();
@@ -45,14 +46,17 @@ void gfx::GameApp::Init()
   m_model->Create();
 
 
-  TextureDesc desc;
-  desc.filePath = "assets/backpack/diffuse1.jpg";
-  m_texture = std::make_unique<gfxTexture>(desc);
-  m_texture->Create();
+  // TextureDesc desc;
+  // desc.filePath = "assets/backpack/diffuse1.jpg";
+  // m_texture = std::make_unique<gfxTexture>(desc);
+  // m_texture->Create();
+
+  m_Deftexture = std::make_unique<gfxWhiteTexture>();
+  m_Deftexture->Create();
+  m_Deftexture->Bind();
 
   auto& sampler =  m_renderState->GetSampler(SamplerState::LinearClamp);
   gfxContext::Get().m_pDeviceContext->PSSetSamplers(0,1,sampler.GetAddressOf());
-
 
   m_update2GPU = std::make_shared<gfxConstacntBufferManager>();
   m_update2GPU->Bind();
@@ -129,14 +133,6 @@ void gfx::GameApp::Render()
   m_update2GPU->UploadLightToPS(light);
   uint32_t indexCnt = m_model->GetIndexCnt();
   Renderer::DrawIndex(indexCnt);
-
-  // for (RenderTriangle *cube : m_shapes)
-  // {
-  //   DirectX::XMMATRIX mvp = m_camera->GetProjectVeiwMatrix() * cube->m_mode;
-  //   m_update2GPU->uploadMVP(mvp);
-  //   m_update2GPU->uploadFloat4(m_layer->GetColor());
-  //   gfxRenderer::DrawIndex(6);
-  // }
 
   m_layer->Render();
   this->end();

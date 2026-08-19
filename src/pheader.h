@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <set>
+#include <array>
 #include <unordered_map>
 #include <functional>
 #include <algorithm>
