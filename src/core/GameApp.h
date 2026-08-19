@@ -9,8 +9,13 @@
 #include "Model.h"
 #include "gfxTexture.h"
 #include "gfxRenderState.h"
+#include "Event/Event.h"
+#include "Event/KeyEvent.h"
+#include "Event/MouseEvent.h"
+
 namespace gfx
 {
+  class NativeWindow;
   class GameApp
   {
     public:
@@ -18,12 +23,17 @@ namespace gfx
     ~GameApp();
     
     void Init();
+    void OnEvent(Event& e);
     void Run();
     void Render();
 
     void Begin();
 
     void end();
+
+    private:
+      bool OnMouseButtonDown(MouseButtonPressedEvent& e);
+      bool OnKeyDown(KeyPressedEvent& e);
     private:
       std::shared_ptr<Camera> m_camera;
       std::shared_ptr<gfxConstacntBufferManager> m_update2GPU;
@@ -31,6 +41,7 @@ namespace gfx
       std::shared_ptr<gfxShaderProgram> m_shader;
       std::shared_ptr<gfxLayout<VertexPosPosNormalUv>> m_layout;
 
+      std::unique_ptr<NativeWindow> m_window;
       std::unique_ptr<gfxTexture> m_texture;
       std::unique_ptr<gfxRenderStateCache> m_renderState;
       std::unique_ptr<Model<VertexPosPosNormalUv>> m_model;

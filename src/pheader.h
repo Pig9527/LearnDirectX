@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include <Windows.h>
 #include <windowsx.h>
 
@@ -16,6 +17,8 @@
 #include <set>
 #include <unordered_map>
 #include <functional>
+#include <algorithm>
+#include <cmath>
 
 #include <chrono>
 #include <mutex>

@@ -30,11 +30,11 @@ void gfx::ImguiLayer::Render()
   ImGui_ImplWin32_NewFrame();
 
   ImGui::NewFrame();
-  static bool bAnimate = false;
+  static bool bAnimate = true;
   if (bAnimate)
   {
-    phi += 0.003f * 0.016f;
-    theta += 0.0037f * 0.016f;
+    phi += 0.003f * 0.16f;
+    theta += 0.037f * 0.16f;
     phi = DirectX::XMScalarModAngle(phi);
     theta = DirectX::XMScalarModAngle(theta);
   }

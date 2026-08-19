@@ -9,6 +9,7 @@ file(GLOB_RECURSE SOURCES
   "src/Graphic/shader/*.cpp"  
   "src/render/*.cpp" 
   "src/window/*.cpp" 
+  "src/core/Event/*.cpp"
   src/Gemotry/Model.cpp
 )
 file(GLOB_RECURSE HEADERS 
@@ -17,6 +18,7 @@ file(GLOB_RECURSE HEADERS
   "src/Graphic/shader/*.h" 
   "src/render/*.h"
   "src/window/*.h" 
+  "src/core/Event/*.h"
   src/Gemotry/Model.h
 )
 
@@ -24,6 +26,7 @@ add_executable(cube src/main.cpp ${SOURCES} ${HEADERS} src/pheader.h )
 
 target_include_directories(cube PRIVATE
     src/core 
+    src/core/Event
     src/render 
     src/window 
     src/Gemotry 

@@ -2,7 +2,9 @@
 #include "Context.h"
 #include "gfxConstantBufferManager.h"
 #include "Renderer.h"
+#include "nativeWindow.h"
 
+#define BIND_EVENT_FN(X) std::bind(&gfx::GameApp::X,this,std::placeholders::_1)
 
 gfx::GameApp::GameApp()
 {
@@ -14,6 +16,16 @@ gfx::GameApp::~GameApp()
 
 void gfx::GameApp::Init()
 {
+
+  gfx::WindowInfo info;
+  info.hinstance = GetModuleHandle(0);
+  info.title = "cube";
+  m_window = std::make_unique<NativeWindow>(info);
+  m_window->Initialize();
+  m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+
+  gfx::Renderer::Init();
 
   m_renderState = std::make_unique<gfxRenderStateCache>();
   m_renderState->Init();
@@ -46,10 +58,19 @@ void gfx::GameApp::Init()
   m_update2GPU->Bind();
 
   m_camera = std::make_shared<Camera>();
-  m_camera->CalculateProjectView();
+  m_camera->Init();
 
   m_layer = std::make_shared<ImguiLayer>();
   m_layer->Attach();
+}
+
+
+
+void gfx::GameApp::OnEvent(Event &e)
+{
+  EventDispatcher dispatcher(e);
+  dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonDown));
+  dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyDown));
 }
 
 void gfx::GameApp::Run()
@@ -65,6 +86,7 @@ void gfx::GameApp::Run()
     else
     {
       this->Render();
+      //m_camera->Update(0.016f);
     }
   }
 }
@@ -76,11 +98,8 @@ void gfx::GameApp::Render()
 
   DirectX::XMMATRIX mod = DirectX::XMMatrixIdentity();
   mod = DirectX::XMMatrixTranspose(
-    DirectX::XMMatrixScalingFromVector(DirectX::XMVectorReplicate(m_layer->scale))*
-    DirectX::XMMatrixRotationX(m_layer->phi) *
-    DirectX::XMMatrixRotationY(m_layer->theta)*
-    DirectX::XMMatrixTranslation(m_layer->tx,m_layer->ty,0.0f)
-  );
+    DirectX::XMMatrixScalingFromVector(DirectX::XMVectorReplicate(m_layer->scale)) *
+    DirectX::XMMatrixRotationY(m_layer->theta));
 
   DirectX::XMMATRIX mvp = m_camera->GetProjectVeiwMatrix() * mod;
   PerFrameData data;
@@ -131,4 +150,31 @@ void gfx::GameApp::Begin()
 void gfx::GameApp::end()
 {
   Renderer::Present();
+}
+
+bool gfx::GameApp::OnMouseButtonDown(MouseButtonPressedEvent &e)
+{
+  return true;
+}
+
+bool gfx::GameApp::OnKeyDown(KeyPressedEvent &e)
+{
+  int keycode = e.GetKeyCode();
+  switch (keycode)
+  {
+  case 'w':
+    m_camera->MoveForward(0.01f);
+    break;
+  case 's':
+    m_camera->MoveForward(-0.01f);
+    break;
+  case 'a':
+    m_camera->MoveRight(-0.01f);
+    break;
+  case 'd':
+    m_camera->MoveRight(0.01f);
+    break;
+
+  }
+  return true;
 }

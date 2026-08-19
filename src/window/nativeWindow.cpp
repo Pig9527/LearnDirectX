@@ -2,6 +2,8 @@
 #include "nativeWindow.h"
 #include "Context.h"
 #include "imgui.h"
+#include "KeyEvent.h"
+#include "MouseEvent.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -81,6 +83,31 @@ LRESULT CALLBACK gfx::NativeWindow::WindowHandleProc(HWND hwnd, UINT msg, WPARAM
     Context::sWindowWidth = LOWORD(lParam);
     Context::sWindowHeight = HIWORD(lParam);
     return 0;
+  case WM_LBUTTONDOWN:
+  {
+    MouseButtonPressedEvent event(1);
+    m_callback(event);
+  }
+  case WM_LBUTTONUP:
+
+  case WM_MOUSEMOVE:
+  {
+    int x = GET_X_LPARAM(lParam);
+    int y = GET_Y_LPARAM(lParam);
+    MouseMoveEvent event(x,y);
+    m_callback(event);
+  }
+  case WM_MOUSEWHEEL:
+  {
+    
+  }
+  return 0;
+  case WM_CHAR:
+  {
+    KeyPressedEvent e((int)wParam,1);
+    m_callback(e);
+  }
+  return 0;
   case WM_DESTROY:
     Context::sbRunning = false;
     PostQuitMessage(0);
