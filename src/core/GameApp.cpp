@@ -72,9 +72,11 @@ void gfx::GameApp::Init()
 
 void gfx::GameApp::OnEvent(Event &e)
 {
-  EventDispatcher dispatcher(e);
-  dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonDown));
-  dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyDown));
+  // EventDispatcher dispatcher(e);
+  // dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonDown));
+  // dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyDown));
+
+  m_camera->OnEvent(e);
 }
 
 void gfx::GameApp::Run()
@@ -90,7 +92,7 @@ void gfx::GameApp::Run()
     else
     {
       this->Render();
-      //m_camera->Update(0.016f);
+      m_camera->Update(0.016f);
     }
   }
 }

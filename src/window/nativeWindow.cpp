@@ -85,11 +85,19 @@ LRESULT CALLBACK gfx::NativeWindow::WindowHandleProc(HWND hwnd, UINT msg, WPARAM
     return 0;
   case WM_LBUTTONDOWN:
   {
-    MouseButtonPressedEvent event(1);
+    int x = GET_X_LPARAM(lParam);
+    int y = GET_Y_LPARAM(lParam);
+    MouseButtonPressedEvent event(1,x,y);
     m_callback(event);
   }
   case WM_LBUTTONUP:
-
+  {
+    int x = GET_X_LPARAM(lParam);
+    int y = GET_Y_LPARAM(lParam);
+    MouseButtonReleasedEvent event(1,x,y);
+    m_callback(event);
+  }
+  return 0;
   case WM_MOUSEMOVE:
   {
     int x = GET_X_LPARAM(lParam);

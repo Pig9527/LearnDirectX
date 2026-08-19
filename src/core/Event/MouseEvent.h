@@ -44,23 +44,29 @@ namespace gfx
       : public Event
   {
   public:
-    MouseButtonEvent(int button)
+    MouseButtonEvent(int button,int x,int y)
         : m_button(button)
+        ,m_x(x)
+        ,m_y(y)
     {
     }
+
+    inline int GetMouseX()  const {return m_x;}
+    inline int GetMouseY() const {return m_y;}
     inline int GetButton() const { return m_button; }
 
     EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
   private:
     int m_button;
+    int m_x, m_y;
   };
 
   class MouseButtonPressedEvent
       : public MouseButtonEvent
   {
   public:
-    MouseButtonPressedEvent(int button)
-        : MouseButtonEvent(button)
+    MouseButtonPressedEvent(int button,int x,int y)
+        : MouseButtonEvent(button,x,y)
     {
     }
 
@@ -71,8 +77,8 @@ namespace gfx
       : public MouseButtonEvent
   {
   public:
-    MouseButtonReleasedEvent(int button)
-        : MouseButtonEvent(button)
+    MouseButtonReleasedEvent(int button,int x,int y)
+        : MouseButtonEvent(button,x,y)
     {
     }
 
