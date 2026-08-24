@@ -185,3 +185,4 @@ bool gfx::Application::OnKeyDown(KeyPressedEvent &e)
   }
   return true;
 }
+#endif
