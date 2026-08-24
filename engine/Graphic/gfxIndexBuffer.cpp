@@ -1,6 +1,6 @@
 #include "gfxIndexBuffer.h"
 #include "gfxContext.h"
-void gfx::gfxIndex::Create(uint32_t cnt, void *data)
+void gfx::gfxIndexBuffer::Create(uint32_t cnt, void *data)
 {
   gfxContext& context = gfxContext::Get();
   D3D11_BUFFER_DESC desc = {};
@@ -13,7 +13,7 @@ void gfx::gfxIndex::Create(uint32_t cnt, void *data)
 
 }
 
-void gfx::gfxIndex::Bind()
+void gfx::gfxIndexBuffer::Bind()
 {
   gfxContext::Get().m_pDeviceContext->IASetIndexBuffer(m_pBuffer.Get(),DXGI_FORMAT_R32_UINT,0);
 }

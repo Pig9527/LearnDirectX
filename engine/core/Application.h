@@ -31,8 +31,8 @@ namespace gfx
       
        std::shared_ptr<Camera> m_camera;
        std::unique_ptr<NativeWindow> m_window;
+       std::shared_ptr<ImguiLayer> m_layer;
       // std::shared_ptr<gfxConstacntBufferManager> m_update2GPU;
-      // std::shared_ptr<ImguiLayer> m_layer;
       // std::shared_ptr<gfxShaderProgram> m_shader;
       // std::shared_ptr<gfxLayout<VertexPosPosNormalUv>> m_layout;
 

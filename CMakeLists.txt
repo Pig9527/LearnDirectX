@@ -32,8 +32,12 @@ set(LIB_DIR ${CMAKE_SOURCE_DIR}/vendor/lib)
 add_subdirectory(engine)
 
 add_subdirectory(sandbox/01_DrawTriangle)
+add_subdirectory(sandbox/02_DrawRect)
+add_subdirectory(sandbox/03_constBuffer)
 
 target_link_libraries(01_DrawATriangle engine)
+target_link_libraries(02_DrawARect engine)
+target_link_libraries(03_UseConstBufferDrawRect engine)
 # file(GLOB_RECURSE SOURCES 
 #   "src/core/*.cpp" 
 #   "src/Graphic/*.cpp"

@@ -2,7 +2,7 @@
 #include "pheader.h"
 namespace gfx
 {
-  class gfxIndex
+  class gfxIndexBuffer
   {
     public:
       void Create(uint32_t cnt,void* data);

@@ -19,7 +19,7 @@ void Render()
 int WINAPI WinMain(HINSTANCE hPreinstance,HINSTANCE hInstacne,PTSTR cmdline, int show)
 {
   gfx::Application app;
-  app.Init("Render A Triangle");
+  app.Init(TEXT("Render A Triangle"));
   app.RenderCallback = Render;
 
   gfx::VertexPosColor vertices[] ={

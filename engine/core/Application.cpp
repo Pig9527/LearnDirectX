@@ -22,6 +22,10 @@ void gfx::Application::Init(LPTSTR title)
   m_window = std::make_unique<NativeWindow>(info);
   m_window->Initialize();
   gfx::Renderer::Init();
+
+  
+  m_layer = std::make_shared<ImguiLayer>();
+  m_layer->Attach();
 # if 0
   m_renderState = std::make_unique<gfxRenderStateCache>();
   m_renderState->Init();
