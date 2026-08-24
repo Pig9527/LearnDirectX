@@ -33,3 +33,4 @@ namespace gfx
   template<typename T>
   using comptr = Microsoft::WRL::ComPtr<T>;
 }
+

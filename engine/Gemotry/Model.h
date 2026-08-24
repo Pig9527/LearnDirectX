@@ -1,13 +1,12 @@
 #pragma once
 #include "pheader.h"
-#include "Geometry.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 #include "gfxVertexBuffer.h"
 #include "gfxIndexBuffer.h"
 #include "gfxLayout.h"
-#include "Geometry.h"
+#include "vertex.h"
 #include "Camera.h"
 namespace gfx
 {

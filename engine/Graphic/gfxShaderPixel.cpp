@@ -1,13 +1,14 @@
-#include "gfxPixelShader.h"
+#include "gfxShaderPixel.h"
 #include "gfxContext.h"
 namespace gfx
 {
-  void gfxPixelShader::Compile(const std::string &source, ShaderCompileOptions &options)
+  void gfxShaderPixel::Compile(const std::string &source)
   {
-    options.EntryPoint = "psMain";
-    options.TargetProfile = "ps_5_0";
+    ShaderCompileOptions option;
+    option.EntryPoint = "psMain";
+    option.TargetProfile = "ps_5_0";
     std::string error;
-    if (!CompileShaderFromSource(source, options, m_pByteBlod, error))
+    if (!CompileShaderFromSource(source, option, m_pByteBlod, error))
     {
       return;
     }
@@ -24,12 +25,13 @@ namespace gfx
         m_pShader.GetAddressOf());
   }
 
-  void gfxPixelShader::CompileFromFile(const std::string &fileName, ShaderCompileOptions &options)
+  void gfxShaderPixel::CompileFromFile(const std::string &fileName)
   {
-    options.EntryPoint = "psMain";
-    options.TargetProfile = "ps_5_0";
+    ShaderCompileOptions option;
+    option.EntryPoint = "psMain";
+    option.TargetProfile = "ps_5_0";
     std::string error;
-    if (!CompileShaderFromFile(fileName, options, m_pByteBlod, error))
+    if (!CompileShaderFromFile(fileName, option, m_pByteBlod, error))
     {
       return;
     }
@@ -44,12 +46,12 @@ namespace gfx
         m_pShader.GetAddressOf());
   }
 
-  void gfxPixelShader::Bind()
+  void gfxShaderPixel::Bind()
   {
     gfxContext::Get().m_pDeviceContext->PSSetShader(m_pShader.Get(), nullptr, 0);
   }
 
-  void gfxPixelShader::UnBind()
+  void gfxShaderPixel::UnBind()
   {
     gfxContext::Get().m_pDeviceContext->PSSetShader(nullptr, nullptr, 0);
   }

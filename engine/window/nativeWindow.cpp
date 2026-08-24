@@ -56,7 +56,7 @@ bool gfx::NativeWindow::Initialize()
   
   m_hwnd = CreateWindow(
     wndclassName,
-    TEXT("DirectX-gfx"),
+    m_windowInfo.title,
     WS_OVERLAPPEDWINDOW^WS_THICKFRAME^WS_MAXIMIZEBOX,
     CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,
     0,0,GetModuleHandle(nullptr),this
@@ -83,6 +83,7 @@ LRESULT CALLBACK gfx::NativeWindow::WindowHandleProc(HWND hwnd, UINT msg, WPARAM
     Context::sWindowWidth = LOWORD(lParam);
     Context::sWindowHeight = HIWORD(lParam);
     return 0;
+#if 0
   case WM_LBUTTONDOWN:
   {
     MouseButtonPressedEvent event(1);
@@ -108,6 +109,8 @@ LRESULT CALLBACK gfx::NativeWindow::WindowHandleProc(HWND hwnd, UINT msg, WPARAM
     m_callback(e);
   }
   return 0;
+#endif
+
   case WM_DESTROY:
     Context::sbRunning = false;
     PostQuitMessage(0);

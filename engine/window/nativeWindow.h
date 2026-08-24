@@ -9,7 +9,7 @@ namespace gfx
   using EventCallbackFn  = std::function<void(Event&)>;
   struct WindowInfo
   {
-    char* title;
+    LPTSTR title;
     HINSTANCE hinstance;
     int width;
     int height;

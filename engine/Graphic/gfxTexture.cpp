@@ -1,6 +1,6 @@
 #include "gfxTexture.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image/stb_image.h"
+#include "stb_image.h"
 #include "gfxContext.h"
 
 static std::vector<char> ConvertRGB2RGBA(char* data,int width,int height)

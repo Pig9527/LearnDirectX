@@ -1,6 +1,6 @@
 #pragma once
 #include "pheader.h"
-#include "Camera.h"
+#include "Core/Camera.h"
 
 namespace gfx
 {

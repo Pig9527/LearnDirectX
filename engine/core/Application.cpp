@@ -1,32 +1,28 @@
-#include "GameApp.h"
+#include "Application.h"
 #include "Context.h"
 #include "gfxConstantBufferManager.h"
 #include "Renderer.h"
 #include "nativeWindow.h"
 
-#define BIND_EVENT_FN(X) std::bind(&gfx::GameApp::X,this,std::placeholders::_1)
+#define BIND_EVENT_FN(X) std::bind(&gfx::Application::X,this,std::placeholders::_1)
 
-gfx::GameApp::GameApp()
+gfx::Application::Application()
 {
 }
 
-gfx::GameApp::~GameApp()
+gfx::Application::~Application()
 {
 }
 
-void gfx::GameApp::Init()
+void gfx::Application::Init(LPTSTR title)
 {
-
   gfx::WindowInfo info;
   info.hinstance = GetModuleHandle(0);
-  info.title = "cube";
+  info.title = title;
   m_window = std::make_unique<NativeWindow>(info);
   m_window->Initialize();
-  m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-
-
   gfx::Renderer::Init();
-
+# if 0
   m_renderState = std::make_unique<gfxRenderStateCache>();
   m_renderState->Init();
 
@@ -66,18 +62,20 @@ void gfx::GameApp::Init()
 
   m_layer = std::make_shared<ImguiLayer>();
   m_layer->Attach();
+
+#endif
 }
 
 
 
-void gfx::GameApp::OnEvent(Event &e)
+void gfx::Application::OnEvent(Event &e)
 {
   EventDispatcher dispatcher(e);
   dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonDown));
   dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyDown));
 }
 
-void gfx::GameApp::Run()
+void gfx::Application::Run()
 {
   MSG msg;
   while (Context::sbRunning)
@@ -89,13 +87,17 @@ void gfx::GameApp::Run()
     }
     else
     {
-      this->Render();
-      //m_camera->Update(0.016f);
+
+      Renderer::Clear();
+      RenderCallback();
+      Renderer::Present();
     }
   }
 }
 
-void gfx::GameApp::Render()
+#if 0
+
+void gfx::Application::Render()
 {
 
   this->Begin();
@@ -138,22 +140,23 @@ void gfx::GameApp::Render()
   this->end();
 }
 
-void gfx::GameApp::Begin()
+void gfx::Application::Begin()
 {
   Renderer::Clear();
 }
 
-void gfx::GameApp::end()
+void gfx::Application::end()
 {
   Renderer::Present();
 }
+#endif
 
-bool gfx::GameApp::OnMouseButtonDown(MouseButtonPressedEvent &e)
+bool gfx::Application::OnMouseButtonDown(MouseButtonPressedEvent &e)
 {
   return true;
 }
 
-bool gfx::GameApp::OnKeyDown(KeyPressedEvent &e)
+bool gfx::Application::OnKeyDown(KeyPressedEvent &e)
 {
   int keycode = e.GetKeyCode();
   switch (keycode)

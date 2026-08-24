@@ -65,8 +65,8 @@ namespace gfx
       gfxShader() = default;
       virtual ~gfxShader() = default;
 
-      virtual void Compile(const std::string& source, ShaderCompileOptions& options) = 0;
-      virtual void CompileFromFile(const std::string& fileName, ShaderCompileOptions& options) = 0;
+      virtual void Compile(const std::string& source) = 0;
+      virtual void CompileFromFile(const std::string& fileName) = 0;
       virtual void Bind() = 0;
       virtual void UnBind() = 0;
 
