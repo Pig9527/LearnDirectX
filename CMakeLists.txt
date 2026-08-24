@@ -34,10 +34,11 @@ add_subdirectory(engine)
 add_subdirectory(sandbox/01_DrawTriangle)
 add_subdirectory(sandbox/02_DrawRect)
 add_subdirectory(sandbox/03_constBuffer)
+add_subdirectory(sandbox/04_light)
 
 target_link_libraries(01_DrawATriangle engine)
 target_link_libraries(02_DrawARect engine)
-target_link_libraries(03_UseConstBufferDrawRect engine)
+target_link_libraries(04_Light engine)
 # file(GLOB_RECURSE SOURCES 
 #   "src/core/*.cpp" 
 #   "src/Graphic/*.cpp"

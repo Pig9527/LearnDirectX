@@ -5,6 +5,7 @@
 template<typename T>
 void gfx::Model<T>::Create()
 {
+#if 0
   m_pVertexBuffer = std::make_unique<gfxVertexBuffer<T>>();
   m_pVertexBuffer->Create(sizeof(T) * m_vertices.size(), m_vertices.data());
   m_pVertexBuffer->Bind();
@@ -13,7 +14,7 @@ void gfx::Model<T>::Create()
   m_pIndexBuffer->Create(m_indices.size(), m_indices.data());
   m_pIndexBuffer->Bind();
 
- 
+#endif
 }
 
 template<typename T>
@@ -25,12 +26,13 @@ void gfx::Model<T>::LoadModelFromFile(const std::string &path)
   if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
   {
     // << import.GetErrorString() << std::endl;
-    //OutputDebugStringA(import.GetErrorString());
+    OutputDebugStringA(import.GetErrorString());
     return;
   }
   processNode(scene->mRootNode, scene);
 }
 
+#if 0
 template<typename T>
 void gfx::Model<T>::RenderModel(std::shared_ptr<Camera> camera)
 {
@@ -39,6 +41,7 @@ void gfx::Model<T>::RenderModel(std::shared_ptr<Camera> camera)
   DirectX::XMMATRIX mvp = camera->GetProjectVeiwMatrix() * mod;
   Renderer::DrawIndex(m_indices.size());
 }
+#endif
 template<typename T>
 void gfx::Model<T>::processNode(aiNode *node, const aiScene *scene)
 {
@@ -68,20 +71,20 @@ void gfx::Model<T>::processMesh(aiMesh *mesh, const aiScene *scene)
     {
       /* code */
     }
-    if (mesh->HasTextureCoords(0))
-    {
-      DirectX::XMFLOAT2 texCoord{ mesh->mTextureCoords[0][i].x,mesh->mTextureCoords[0][i].y };
-      vertex.uv = texCoord;
-    }
+    /*  if (mesh->HasTextureCoords(0))
+      {
+        DirectX::XMFLOAT2 texCoord{ mesh->mTextureCoords[0][i].x,mesh->mTextureCoords[0][i].y };
+        vertex.uv = texCoord;
+      }*/
 
-    if (mesh->HasNormals())
-    {
-      DirectX::XMFLOAT3 normal;
-      normal.x = mesh->mNormals[i].x;
-      normal.y = mesh->mNormals[i].y;
-      normal.z = mesh->mNormals[i].z;
-      vertex.normal = normal;
-    }
+      /*   if (mesh->HasNormals())
+         {
+           DirectX::XMFLOAT3 normal;
+           normal.x = mesh->mNormals[i].x;
+           normal.y = mesh->mNormals[i].y;
+           normal.z = mesh->mNormals[i].z;
+           vertex.normal = normal;
+         }*/
 
     vertex.color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     m_vertices.push_back(vertex);
