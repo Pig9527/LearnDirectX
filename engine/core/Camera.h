@@ -1,5 +1,8 @@
 #pragma once
 #include "pheader.h"
+#include "Event.h"
+#include "KeyEvent.h"
+#include "MouseEvent.h"
 
 namespace gfx
 {
@@ -13,6 +16,7 @@ namespace gfx
     void Init();
     void Update(float dt);
 
+    void OnEvent(Event& e);
     void Rotate(float pitch, float yaw);
     void Zoom(float delta);
     void MoveForward(float distance);
@@ -44,6 +48,11 @@ namespace gfx
     void calculateProjectView();
     void calcualteVector();
 
+    bool OnMouseMoved(MouseMoveEvent& e);
+    bool OnMouseScrolled(MouseScrolledEvent& e);
+    bool OnMouseLeftButtonDown(MouseButtonPressedEvent& e);
+    bool OnMouseLeftButtonUp(MouseButtonReleasedEvent& e);
+
   private:
     float m_fov;
     float m_aspectRation;
@@ -54,6 +63,11 @@ namespace gfx
     float m_pitch;
     float m_yaw;
     bool m_needUpdate;
+    DirectX::XMFLOAT2 m_mousePos;
+    DirectX::XMFLOAT2 m_mouseOffset;
+    bool m_bmouseLeftButtonDown;
+    bool m_bmouseMove;
+
     DirectX::XMFLOAT3 m_position;
     DirectX::XMFLOAT3 m_target;
     DirectX::XMFLOAT3 m_up;

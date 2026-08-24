@@ -74,9 +74,11 @@ void gfx::Application::Init(LPTSTR title)
 
 void gfx::Application::OnEvent(Event &e)
 {
-  EventDispatcher dispatcher(e);
-  dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonDown));
-  dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyDown));
+  // EventDispatcher dispatcher(e);
+  // dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonDown));
+  // dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyDown));
+
+  m_camera->OnEvent(e);
 }
 
 void gfx::Application::Run()
@@ -98,6 +100,8 @@ void gfx::Application::Run()
     }
   }
 }
+
+#if 0
 
 #if 0
 
