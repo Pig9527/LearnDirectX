@@ -3,17 +3,16 @@
 #include "stb_image.h"
 #include "gfxContext.h"
 
-static std::vector<char> ConvertRGB2RGBA(char* data,int width,int height)
+static void ConvertRGB2RGBA(char* data,int width,int height,char* dest)
 {
-  std::vector<char> rgba(width*height*4);
- for (int i = 0; i < width * height; i++)
+  //std::vector<char> rgba(width*height*4);
+  for (int i = 0; i < width * height; i++)
   {
-    rgba[i * 4 + 0] = data[i * 3 + 0];
-    rgba[i * 4 + 1] = data[i * 3 + 1];
-    rgba[i * 4 + 2] = data[i * 3 + 2];
-    rgba[i * 4 + 3] = 255;
+    dest[i * 4 + 0] = data[i * 3 + 0];
+    dest[i * 4 + 1] = data[i * 3 + 1];
+    dest[i * 4 + 2] = data[i * 3 + 2];
+    dest[i * 4 + 3] = 255;
   }
-  return rgba;
 }
 
 gfx::gfxTexture::gfxTexture(const TextureDesc &textureDesc)
@@ -50,9 +49,12 @@ void gfx::gfxTexture::Create()
   tdc.Usage = D3D11_USAGE_IMMUTABLE;
   tdc.MipLevels = 1;
   D3D11_SUBRESOURCE_DATA td = {};
-  if(m_Channels == 3)
+  char* convertDest = nullptr;
+  if (m_Channels == 3)
   {
-    td.pSysMem = ConvertRGB2RGBA((char*)data,m_width,m_height).data();
+    char* convertDest = new char[m_width * m_height * 4];
+    ConvertRGB2RGBA((char*)data, m_width, m_height, convertDest);
+    td.pSysMem = convertDest;
   }
   else
   {
@@ -66,7 +68,7 @@ void gfx::gfxTexture::Create()
   HR(context.m_pDevice->CreateTexture2D(&tdc,&td,m_pTexture.GetAddressOf()));
   HR(context.m_pDevice->CreateShaderResourceView(m_pTexture.Get(),nullptr,m_pShaderView.GetAddressOf()));
 
-
+  if (convertDest) { delete[] convertDest; }
   stbi_image_free(data);
 }
 

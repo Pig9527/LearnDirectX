@@ -10,6 +10,7 @@ namespace gfx
       static void Init();
       static void Clear();
       static void DrawIndex(uint32_t cnt);
+      static void Draw(uint32_t cnt);
       static void Present();
 
   };

@@ -25,6 +25,11 @@ void gfx::Renderer::DrawIndex(uint32_t cnt)
   gfxContext::Get().m_pDeviceContext->DrawIndexed(cnt,0,0);
 }
 
+void gfx::Renderer::Draw(uint32_t cnt)
+{
+  gfxContext::Get().m_pDeviceContext->Draw(cnt, 0);
+}
+
 void gfx::Renderer::Present()
 {
   gfxContext::Get().m_pSwapChain->Present(0,0);
