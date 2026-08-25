@@ -22,7 +22,12 @@ namespace gfx
       comptr<ID3D11Texture2D> m_pBackbuffer;
       comptr<ID3D11Texture2D> m_pDepthStencilBuffer;
       comptr<ID3D11DepthStencilView> m_pDepthStencilView;
-
+      
+      comptr<ID2D1Factory> m_pD2dFactory;
+      comptr<ID2D1RenderTarget> m_pD2dRenderTarget;
+      comptr<IDWriteFactory> m_pDwriteFactory;
+      comptr<IDWriteTextFormat> m_pDwriteFormat;
+      comptr<ID2D1SolidColorBrush> m_pColorBrush;
     protected:
       gfxContext();
       ~gfxContext();

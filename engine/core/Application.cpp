@@ -96,8 +96,29 @@ void gfx::Application::Run()
 
       Renderer::Clear();
       RenderCallback();
+
+      RenderFont();
+
       Renderer::Present();
     }
+  }
+}
+
+void gfx::Application::RenderFont()
+{
+  gfx::gfxContext& context = gfx::gfxContext::Get();
+  if (m_font.text == nullptr)
+  {
+    return;
+  }
+  if (context.m_pD2dRenderTarget != nullptr)
+  {
+    context.m_pD2dRenderTarget->BeginDraw();
+    context.m_pD2dRenderTarget->DrawTextW(m_font.text, wcslen(m_font.text), context.m_pDwriteFormat.Get(),
+      D2D1_RECT_F{ 0.0f,0.0f,m_font.width,m_font.height }, context.m_pColorBrush.Get());
+
+    HR(context.m_pD2dRenderTarget->EndDraw());
+    /* code */
   }
 }
 

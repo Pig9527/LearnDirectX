@@ -235,7 +235,7 @@ void CreateModel()
   models[3].indexCnt = models[3].pModel->GetIndexCnt();
 }
 
-int WINAPI WinMain(HINSTANCE hPreinstance, HINSTANCE hInstacne, PTSTR cmdline, int show)
+int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline, int show)
 {
   pixelColor.material.ambient = DirectX::XMFLOAT4{ 0.5f, 0.5f, 0.5f, 1.0f };
   pixelColor.material.diffuse = DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f };
@@ -269,6 +269,10 @@ int WINAPI WinMain(HINSTANCE hPreinstance, HINSTANCE hInstacne, PTSTR cmdline, i
   gfx::Application app;
   app.Init(TEXT("light"));
   app.RenderCallback = Render;
+  LPTSTR text = L"切换灯光类型: 1-平行光 2-点光 3-聚光灯\n"
+    "切换模型: Q-立方体 W-球体 E-圆柱体 R-圆锥体\n";
+
+  app.SetFontParam(gfx::FontParam{ 600.0f,200.0f,text });
 
   CreateModel();
   models[0].pVertexBuffer->Bind(); models[0].pIndex->Bind();

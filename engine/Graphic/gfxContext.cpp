@@ -12,7 +12,7 @@ void gfx::gfxContext::Initialize()
     nullptr,
     D3D_DRIVER_TYPE_HARDWARE,
     nullptr,
-    D3D10_CREATE_DEVICE_DEBUG,
+    D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_BGRA_SUPPORT,
     features,
     ARRAYSIZE(features),
     D3D11_SDK_VERSION,
@@ -23,7 +23,7 @@ void gfx::gfxContext::Initialize()
   DXGI_SWAP_CHAIN_DESC sd ={};
   sd.BufferDesc.Width = Context::sWindowWidth;
   sd.BufferDesc.Height = Context::sWindowHeight;
-  sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+  sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
   sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
   sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_PROGRESSIVE;
   sd.BufferDesc.RefreshRate.Denominator = 0;
@@ -71,6 +71,26 @@ void gfx::gfxContext::Initialize()
   
   m_pDeviceContext->RSSetViewports(1,&viewport);
 
+  HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,m_pD2dFactory.GetAddressOf()));
+
+  comptr<IDXGISurface> surface;
+  HR(m_pSwapChain->GetBuffer(0,__uuidof(IDXGISurface),reinterpret_cast<void**>(surface.GetAddressOf())));
+
+  D2D1_RENDER_TARGET_PROPERTIES props;
+  ZeroMemory(&props,sizeof(props));
+  props.type = D2D1_RENDER_TARGET_TYPE_DEFAULT,
+  props.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN,D2D1_ALPHA_MODE_PREMULTIPLIED);
+
+  HR(m_pD2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(),&props,m_pD2dRenderTarget.GetAddressOf()));
+
+  surface.Reset();
+  HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,__uuidof(IDWriteFactory),reinterpret_cast<IUnknown**>(m_pDwriteFactory.GetAddressOf())));
+
+  HR(m_pDwriteFactory->CreateTextFormat(L"SimSun" ,nullptr,DWRITE_FONT_WEIGHT_NORMAL,DWRITE_FONT_STYLE_NORMAL,
+    DWRITE_FONT_STRETCH_NORMAL,20, L"zh-cn",m_pDwriteFormat.GetAddressOf()
+  ));
+
+  HR(m_pD2dRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White),m_pColorBrush.GetAddressOf()));
 }
 
 gfx::gfxContext::gfxContext()

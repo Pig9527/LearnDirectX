@@ -7,6 +7,10 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <wrl/client.h>
+
+#include <d2d1.h>
+#include <dwrite.h>
+
 #include <sstream>
 #include <fstream>
 #include <memory>

@@ -29,5 +29,5 @@ message(status ${CMAKE_SOURCE_DIR})
 target_link_directories(engine PRIVATE ${CMAKE_SOURCE_DIR}/vendor/lib)
 
 target_link_libraries(engine
-  dxgi d3d11 d3dcompiler imgui_dx11 assimp-vc142-mtd
+  dxgi d3d11 d3dcompiler imgui_dx11 assimp-vc142-mtd d2d1 dwrite
 )
