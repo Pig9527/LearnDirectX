@@ -10,30 +10,61 @@
 //#include "Camera.h"
 namespace gfx
 {
-  template<typename T>
   class Model
   {
     public:
 
       Model() = default;
-      ~Model() = default;
+      virtual ~Model(){}
 
       void Create();
       void LoadModelFromFile(const std::string& path);
 
-      //void RenderModel(std::shared_ptr<Camera> camera);
-
-      std::vector<T>& GetVertices(){return m_vertices;}
+      virtual void* GetVertex() = 0; 
+      virtual uint32_t GetVertexSize() = 0; 
       std::vector<uint32_t>& GetIndices(){return m_indices;}
 
       uint32_t GetIndexCnt(){return m_indices.size();}
-    private:
+
+
+    protected:
       void processNode(aiNode* node,const aiScene* scene);
-      void processMesh(aiMesh* mesh,const aiScene* scene);
-    private:
-      std::vector<T> m_vertices;
+      virtual void processMesh(aiMesh* mesh,const aiScene* scene);
+
+      void processPosition(void* vertex,aiVector3D* aiVert);
+      void processColor(void* vertex,aiColor4D *color);
+      void processVertexIndex(aiMesh* mesh);
+    protected:
       std::vector<uint32_t> m_indices;
   };
 
+
+  class ModelNormal
+    :public Model
+  {
+    public:
+      ModelNormal() = default;
+      ~ModelNormal() = default;
+
+      void* GetVertex() override {return m_vertices.data();}
+      uint32_t GetVertexSize() override {return m_vertices.size() * sizeof(VertexPosColorNormal);}
+      void processMesh(aiMesh* mesh,const aiScene* scene) override;
+    private:
+      std::vector<VertexPosColorNormal> m_vertices;
+  };
+
+  class ModelTexCoord
+    :public Model
+  {
+    public:
+      ModelTexCoord() = default;
+      ~ModelTexCoord() = default;
+
+      void* GetVertex() override {return m_vertices.data();}
+      uint32_t GetVertexSize() override {return m_vertices.size() * sizeof(VertexPosColorUv);}
+      void processMesh(aiMesh* mesh,const aiScene* scene) override;
+    private:
+      std::vector<VertexPosColorUv> m_vertices;
+  };
 }
-#include "Model.inl"
+
