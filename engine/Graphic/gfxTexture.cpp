@@ -2,6 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "gfxContext.h"
+#include "DDSTextureLoader11.h"
 
 static void ConvertRGB2RGBA(char* data,int width,int height,char* dest)
 {
@@ -15,61 +16,68 @@ static void ConvertRGB2RGBA(char* data,int width,int height,char* dest)
   }
 }
 
-gfx::gfxTexture::gfxTexture(const TextureDesc &textureDesc)
+gfx::gfxTexture::gfxTexture(int slot /*= 1*/)
 {
-  m_filePath = textureDesc.filePath;
-  m_slot = textureDesc.slot;
+  m_slot = slot;
 }
 
 gfx::gfxTexture::~gfxTexture()
 {
 }
 
-void gfx::gfxTexture::Create()
+void gfx::gfxTexture::Create(const std::wstring path, eTextureType type /*= eTextureType::DDS*/)
 {
   int width,height,channel;
-  stbi_uc* data = stbi_load(m_filePath.c_str(),&width,&height,&channel,0);
-  if (!data)
+  if (type == eTextureType::DDS)
   {
-    return;
-  }
-  m_width = width;
-  m_height = height;
-  m_Channels = channel;
-
-  D3D11_TEXTURE2D_DESC tdc={};
-  tdc.ArraySize = 1;
-  tdc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-  tdc.CPUAccessFlags = 0;
-  tdc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-  tdc.Width =width;
-  tdc.Height= height;
-  tdc.SampleDesc.Count = 1;
-  tdc.SampleDesc.Quality = 0;
-  tdc.Usage = D3D11_USAGE_IMMUTABLE;
-  tdc.MipLevels = 1;
-  D3D11_SUBRESOURCE_DATA td = {};
-  char* convertDest = nullptr;
-  if (m_Channels == 3)
-  {
-    char* convertDest = new char[m_width * m_height * 4];
-    ConvertRGB2RGBA((char*)data, m_width, m_height, convertDest);
-    td.pSysMem = convertDest;
+    gfxContext& context = gfx::gfxContext::Get();
+    DirectX::CreateDDSTextureFromFile(context.m_pDevice.Get(),path.c_str(),nullptr,m_pShaderView.GetAddressOf());
   }
   else
   {
-    td.pSysMem = data;
+    stbi_uc* data = stbi_load(m_filePath.c_str(),&width,&height,&channel,0);
+    if (!data)
+    {
+      return;
+    }
+    m_width = width;
+    m_height = height;
+    m_Channels = channel;
+
+    D3D11_TEXTURE2D_DESC tdc={};
+    tdc.ArraySize = 1;
+    tdc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    tdc.CPUAccessFlags = 0;
+    tdc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    tdc.Width =width;
+    tdc.Height= height;
+    tdc.SampleDesc.Count = 1;
+    tdc.SampleDesc.Quality = 0;
+    tdc.Usage = D3D11_USAGE_IMMUTABLE;
+    tdc.MipLevels = 1;
+    D3D11_SUBRESOURCE_DATA td = {};
+    char* convertDest = nullptr;
+    if (m_Channels == 3)
+    {
+      char* convertDest = new char[m_width * m_height * 4];
+      ConvertRGB2RGBA((char*)data, m_width, m_height, convertDest);
+      td.pSysMem = convertDest;
+    }
+    else
+    {
+      td.pSysMem = data;
+    }
+
+    td.SysMemPitch = width * 4 * sizeof(char);
+
+    gfxContext& context = gfxContext::Get();
+
+    HR(context.m_pDevice->CreateTexture2D(&tdc,&td,m_pTexture.GetAddressOf()));
+    HR(context.m_pDevice->CreateShaderResourceView(m_pTexture.Get(),nullptr,m_pShaderView.GetAddressOf()));
+
+    if (convertDest) { delete[] convertDest; }
+    stbi_image_free(data);
   }
-
-  td.SysMemPitch = width * 4 * sizeof(char);
-  
-  gfxContext& context = gfxContext::Get();
-
-  HR(context.m_pDevice->CreateTexture2D(&tdc,&td,m_pTexture.GetAddressOf()));
-  HR(context.m_pDevice->CreateShaderResourceView(m_pTexture.Get(),nullptr,m_pShaderView.GetAddressOf()));
-
-  if (convertDest) { delete[] convertDest; }
-  stbi_image_free(data);
 }
 
 void gfx::gfxTexture::Bind()
