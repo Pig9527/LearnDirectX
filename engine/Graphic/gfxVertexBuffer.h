@@ -50,6 +50,6 @@ void gfx::gfxVertexBuffer<T>::Bind()
 {
   UINT stride = sizeof(T);
   UINT offset = 0;
-  gfxContext::Get().m_pDeviceContext->IASetVertexBuffers(0,1,m_pBuffer.GetAddressOf(),&stride,&offset);
+  gfxContext::Get().m_pDeviceContext->IASetVertexBuffers(m_slot,1,m_pBuffer.GetAddressOf(),&stride,&offset);
 }
 

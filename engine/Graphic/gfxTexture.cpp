@@ -28,10 +28,11 @@ gfx::gfxTexture::~gfxTexture()
 void gfx::gfxTexture::Create(const std::wstring path, eTextureType type /*= eTextureType::DDS*/)
 {
   int width,height,channel;
+  HRESULT hr = S_OK;
   if (type == eTextureType::DDS)
   {
     gfxContext& context = gfx::gfxContext::Get();
-    DirectX::CreateDDSTextureFromFile(context.m_pDevice.Get(),path.c_str(),nullptr,m_pShaderView.GetAddressOf());
+    hr = DirectX::CreateDDSTextureFromFile(context.m_pDevice.Get(),path.c_str(),nullptr,m_pShaderView.GetAddressOf());
   }
   else
   {

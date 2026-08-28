@@ -90,4 +90,90 @@ namespace gfx
     }
   };
   
+  struct GemotryPlane
+  {
+    std::vector<VertexPosColorNormalUv> Vertices;
+    std::vector<uint32_t> Indices;
+
+    void Create(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 size, DirectX::XMFLOAT3 rotate = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT3& transform = DirectX::XMFLOAT3{0.0f,0.0f,0.0f}, const DirectX::XMFLOAT4& color = DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f })
+    {
+      Vertices.resize(4);
+      Indices.resize(6);
+      float w2 = size.x / 2.0f;
+      float h2 = size.y / 2.0f;
+      float d2 = size.z / 2.0f;
+#if 1
+
+#if 0
+      Vertices[0].position = DirectX::XMFLOAT3{position.x + w2,position.y - h2,position.z - d2 };
+      Vertices[1].position = DirectX::XMFLOAT3{position.x + w2,position.y - h2,position.z + d2};
+      Vertices[2].position = DirectX::XMFLOAT3{position.x - w2,position.y - h2,position.z + d2};
+      Vertices[3].position = DirectX::XMFLOAT3{position.x - w2,position.y - h2,position.z - d2};
+#else
+      Vertices[0].position = DirectX::XMFLOAT3{ position.x - w2,position.y - h2,position.z - d2 };
+      Vertices[1].position = DirectX::XMFLOAT3{ position.x - w2,position.y - h2,position.z + d2 };
+      Vertices[2].position = DirectX::XMFLOAT3{ position.x + w2,position.y - h2,position.z + d2 };
+      Vertices[3].position = DirectX::XMFLOAT3{ position.x + w2,position.y - h2,position.z - d2 };
+
+#endif
+      DirectX::XMMATRIX translation = DirectX::XMMatrixTranslation(transform.x, transform.y, transform.z);
+
+      DirectX::XMMATRIX rotateMatrix = DirectX::XMMatrixRotationRollPitchYaw(rotate.x, rotate.y, rotate.z);
+      
+      DirectX::XMMATRIX world = rotateMatrix * translation;
+     
+      for (int i =0;i<4;i++)
+      {
+        DirectX::XMVECTOR pos = DirectX::XMLoadFloat3(&Vertices[i].position);
+        pos = DirectX::XMVector3Transform(pos, world);
+        DirectX::XMStoreFloat3(&Vertices[i].position, pos);
+#if 0
+        
+        DirectX::XMVECTOR translate = DirectX::XMVector3Transform(pos, translation);
+        DirectX::XMVECTOR rotateVec = DirectX::XMLoadFloat3(&rotate);
+
+        DirectX::XMVECTOR quat = DirectX::XMQuaternionRotationAxis(rotateVec, DirectX::XMConvertToRadians(angle));
+        DirectX::XMVECTOR result = DirectX::XMVector3Rotate(translate, quat);
+
+        //DirectX::XMVECTOR result = DirectX::XMVectorMultiply(rotate,translate);
+        DirectX::XMStoreFloat3(&Vertices[i].position, result);
+#endif
+
+      }
+
+#else 
+      Vertices[0].position = DirectX::XMFLOAT3{ -50.0f, 10.0f, -50.0f }; // 左上
+      Vertices[1].position = DirectX::XMFLOAT3{ 50.0f, 10.0f, -50.0f }; // 右上
+      Vertices[2].position = DirectX::XMFLOAT3{ 50.0f, 10.0f,  50.0f }; // 右下
+      Vertices[3].position = DirectX::XMFLOAT3{ -50.0f, 10.0f,  50.0f }; // 左下
+
+#endif
+      // Vertices[0].position =
+      // DirectX::XMMatrixTranslation()
+      // DirectX::XMMatrixIdentity() * DirectX::XMFLOAT3(1.0f,1.0f,0.0f);
+     
+      Vertices[0].color = color;
+      Vertices[1].color = color;
+      Vertices[2].color = color;
+      Vertices[3].color = color;
+
+      Vertices[0].normal = DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f };
+      Vertices[1].normal = DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f };
+      Vertices[2].normal = DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f };
+      Vertices[3].normal = DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f };
+#if 0
+      Vertices[0].uv = DirectX::XMFLOAT2{0.0f,0.0f};
+      Vertices[1].uv = DirectX::XMFLOAT2{1.0f,0.0f};
+      Vertices[2].uv = DirectX::XMFLOAT2{1.0f,1.0f};
+      Vertices[3].uv = DirectX::XMFLOAT2{0.0f,1.0f};
+#else
+      Vertices[0].uv = DirectX::XMFLOAT2{ 0.0f,0.0f };
+      Vertices[1].uv = DirectX::XMFLOAT2{ 0.0f,1.0f };
+      Vertices[2].uv = DirectX::XMFLOAT2{ 1.0f,1.0f };
+      Vertices[3].uv = DirectX::XMFLOAT2{ 1.0f,0.0f };
+#endif
+      Indices[0] = 0;Indices[1] = 1;Indices[2] = 2;
+      Indices[3] = 2;Indices[4] = 3;Indices[5] = 0;
+    }
+  };
 } // namespace gfx

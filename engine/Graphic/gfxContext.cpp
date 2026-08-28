@@ -63,7 +63,7 @@ void gfx::gfxContext::Initialize()
   viewport.TopLeftX = 0;
   viewport.TopLeftY = 0;
   viewport.Width =  Context::sWindowWidth;
-  viewport.Height =  Context::sWindowHeight;
+  viewport.Height =  static_cast<float>(Context::sWindowHeight);
   viewport.MinDepth = 0.0f;
   viewport.MaxDepth = 1.0f;
 

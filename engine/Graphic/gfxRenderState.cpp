@@ -22,18 +22,19 @@ void gfx::gfxRenderStateCache::initBlendState()
   {
     D3D11_RENDER_TARGET_BLEND_DESC renderTargetBlendDesc;
     ZeroMemory(&renderTargetBlendDesc, sizeof(renderTargetBlendDesc));
-    renderTargetBlendDesc.BlendEnable = false;
-    renderTargetBlendDesc.SrcBlend = D3D11_BLEND_ONE;
-    renderTargetBlendDesc.DestBlend = D3D11_BLEND_SRC_ALPHA;
+    renderTargetBlendDesc.BlendEnable = true;
+    renderTargetBlendDesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+    renderTargetBlendDesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
     renderTargetBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
     renderTargetBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
-    renderTargetBlendDesc.DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+    renderTargetBlendDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
     renderTargetBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
     renderTargetBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
     D3D11_BLEND_DESC blendDesc;
     ZeroMemory(&blendDesc, sizeof(blendDesc));
     blendDesc.AlphaToCoverageEnable = false;
+    blendDesc.IndependentBlendEnable = false;
     blendDesc.RenderTarget[0] = renderTargetBlendDesc;
 
     comptr<ID3D11BlendState> pBlendState;
