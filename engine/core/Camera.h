@@ -10,7 +10,7 @@ namespace gfx
   {
   public:
     Camera();
-    virtual ~Camera() = 0;
+    ~Camera();
 
   public:
     void Init();

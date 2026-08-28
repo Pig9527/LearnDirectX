@@ -27,14 +27,23 @@ struct pixelIn
 
 pixelIn vsMain(vertexIn vIn)
 {
+
   pixelIn pIn;
   pIn.position = mul(float4(vIn.position,1.0f),mvp);
   pIn.color = vIn.color;
-  //pIn.normal = vIn.normal;
   float4 poW = mul(float4(vIn.position,1.0f),world);
   pIn.positionW = poW.xyz;
   pIn.normal = mul(vIn.normal,(float3x3)worldInvTranspose);
   pIn.texCoord = vIn.texCoord;
   return pIn;
+
+ /*
+  pixelIn pIn;
+  pIn.position = float4(vIn.position,1.0f);
+  pIn.color = vIn.color;
+  pIn.normal = vIn.normal;
+  pIn.texCoord = vIn.texCoord;
+  return pIn;
+  */
 
 }

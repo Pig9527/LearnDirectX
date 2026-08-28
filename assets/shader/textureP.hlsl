@@ -27,6 +27,12 @@ cbuffer PSConstant:register(b1)
   float pad;
 };
 
+cbuffer PStexture:register(b2)
+{
+  float tiling;
+  float3 pad2;
+};
+
 struct pixelIn
 {
   float4 position:SV_POSITION;
@@ -39,8 +45,12 @@ struct pixelIn
 float4 psMain(pixelIn pIn):SV_TARGET
 {
   //return float4(pIn.texCoord,0.0f,1.0f);
+
   float4 ambient,diffuse,specular;
   ambient = diffuse = specular= float4(0.0f,0.0f,0.0f,0.0f);
+
+  float4 texColor = gTex.Sample(gSampler,pIn.texCoord*tiling);
+  clip(texColor.a - 0.1f);
 
   float3 normal = normalize(pIn.normal);
   float eye = normalize(gEye - pIn.positionW);
@@ -56,7 +66,7 @@ float4 psMain(pixelIn pIn):SV_TARGET
     diffuse = diffuseFactor * gMaterial.diffuse * gLight.diffuse;
     specular = specFactor * gMaterial.specular* gLight.specular;
   }
-  float4 litColor = pIn.color * gTex.Sample(gSampler,pIn.texCoord) * (ambient+diffuse) +specular;
-  litColor.a = gMaterial.diffuse.a * pIn.color.a;
+  float4 litColor = pIn.color * texColor * (ambient+diffuse) +specular;
+  litColor.a = gMaterial.diffuse.a * pIn.color.a * texColor.a;
   return litColor;
 }

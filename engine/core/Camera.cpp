@@ -1,14 +1,15 @@
 #include "Camera.h"
 #include "Context.h"
 #include "Input.h"
+#include "Context.h"
 #define BIN_EVENT(fn) std::bind(&fn, this, std::placeholders::_1)
 
 gfx::Camera::Camera()
-    : m_fov(DirectX::XM_PIDIV2),
+    : m_fov(DirectX::XM_PIDIV4),
       m_aspectRation(16.0f / 9.0f),
       m_near(0.1f), m_far(1000.0f),
       m_moveSpeed(5.0f),
-      m_zoomSpeed(0.2f),
+      m_zoomSpeed(0.5f),
       m_pitch(0.0f), m_yaw(0.0f),
       m_needUpdate(true),
       m_bmouseLeftButtonDown(true),
@@ -19,6 +20,7 @@ gfx::Camera::Camera()
       m_right(1.0f, 0.0f, 0.0f),
       m_forward(0.0f, 0.0f, 1.0f)
 {
+  m_aspectRation = static_cast<float>(Context::sWindowWidth) / static_cast<float>(Context::sWindowHeight);
 }
 
 gfx::Camera::~Camera()
@@ -34,31 +36,31 @@ void gfx::Camera::Init()
 
 void gfx::Camera::Update(float dt)
 {
-  if (Input::IsKeyPressed('W'))
-  {
-    m_position.z += m_moveSpeed * dt * 0.02f;
-  }
-  if (Input::IsKeyPressed('S'))
-  {
-    m_position.z -= m_moveSpeed * dt * 0.02f;
-  }
-  if (Input::IsKeyPressed('A'))
-  {
-    m_position.x -= m_moveSpeed * dt * 0.02f;
-  }
+  //if (Input::IsKeyPressed('W'))
+  //{
+  //  m_position.z += m_moveSpeed * dt * 0.02f;
+  //}
+  //if (Input::IsKeyPressed('S'))
+  //{
+  //  m_position.z -= m_moveSpeed * dt * 0.02f;
+  //}
+  //if (Input::IsKeyPressed('A'))
+  //{
+  //  m_position.x -= m_moveSpeed * dt * 0.02f;
+  //}
 
-  if (Input::IsKeyPressed('D'))
-  {
-    m_position.x += m_moveSpeed * dt * 0.02f;
-  }
-  if (m_bmouseLeftButtonDown && m_bmouseMove)
-  {
+  //if (Input::IsKeyPressed('D'))
+  //{
+  //  m_position.x += m_moveSpeed * dt * 0.02f;
+  //}
+  //if (m_bmouseLeftButtonDown && m_bmouseMove)
+  //{
 
-    m_position.x += m_mouseOffset.x * m_moveSpeed * 0.0f * dt;
-    m_position.y += m_mouseOffset.x * m_moveSpeed * 0.0f * dt;
-  }
+  //  m_position.x += m_mouseOffset.x * m_moveSpeed * 0.0f * dt;
+  //  m_position.y += m_mouseOffset.x * m_moveSpeed * 0.0f * dt;
+  //}
 
-  m_bmouseMove = false;
+  //m_bmouseMove = false;
   calcualteVector();
   calculateProjectView();
 }
@@ -76,21 +78,49 @@ void gfx::Camera::Rotate(float pitch, float yaw)
 {
   m_pitch += pitch;
   m_yaw += yaw;
-
-  m_pitch = std::max(((-DirectX::XM_PI) / 2.0f + 0.01f), std::min((DirectX::XM_PI / 2.0f - 0.01f), m_pitch));
+  if (m_pitch > DirectX::XM_PI *7.0f / 18.0f)
+  {
+    m_pitch = DirectX::XM_PI * 7.0f / 18.0f;
+  }
+  else if(m_pitch < -DirectX::XM_PI * 7.0f / 18.0f)
+  {
+    m_pitch = -DirectX::XM_PI * 7.0f / 18.0f;
+  }
+  //m_pitch = std::max(((-DirectX::XM_PI) / 2.0f + 0.01f), std::min((DirectX::XM_PI / 2.0f - 0.01f), m_pitch));
   m_needUpdate = true;
 }
 
 void gfx::Camera::Zoom(float delta)
 {
+
+#if 0
   DirectX::XMVECTOR position = DirectX::XMLoadFloat3(&m_position);
   DirectX::XMVECTOR forward = DirectX::XMLoadFloat3(&m_forward);
 
   DirectX::XMVECTOR temp = DirectX::XMVectorScale(DirectX::XMVectorScale(forward, m_zoomSpeed), delta);
-  DirectX::XMVectorAdd(position, temp);
-  DirectX::XMStoreFloat3(&m_position, position);
+  DirectX::XMVECTOR result = DirectX::XMVectorAdd(position, temp);
+  DirectX::XMStoreFloat3(&m_position, result);
+
 
   m_needUpdate = true;
+#endif
+  DirectX::XMVECTOR position = DirectX::XMLoadFloat3(&m_position);
+  DirectX::XMVECTOR forward = DirectX::XMLoadFloat3(&m_forward);
+
+  // 直接计算偏移量
+  float speed = m_zoomSpeed * delta;
+  if (speed < -100.0f)
+  {
+    speed = -100.0f;
+  }
+  else if(speed > 100.0f)
+  {
+    speed = 100.0f;
+  }
+  DirectX::XMVECTOR offset = DirectX::XMVectorScale(forward, speed);
+  DirectX::XMVECTOR result = DirectX::XMVectorAdd(position, offset);
+
+  DirectX::XMStoreFloat3(&m_position, result);
 }
 
 void gfx::Camera::MoveForward(float distance)
@@ -99,6 +129,7 @@ void gfx::Camera::MoveForward(float distance)
   DirectX::XMVECTOR forward = DirectX::XMLoadFloat3(&m_forward);
   DirectX::XMVECTOR temp = DirectX::XMVectorScale(DirectX::XMVectorScale(forward, m_moveSpeed), distance);
   position = DirectX::XMVectorAdd(position, temp);
+  position = DirectX::XMVectorClamp(position, DirectX::XMVectorSet(-45.0f, -2.0f, -60.0f, 0.0f), DirectX::XMVectorSet(45.0f, 20.0f, 45.0f, 0.0f));
   DirectX::XMStoreFloat3(&m_position, position);
 
   m_needUpdate = true;
@@ -143,6 +174,8 @@ void gfx::Camera::calculateProjectView()
 
 void gfx::Camera::calcualteVector()
 {
+
+#if 0
   DirectX::XMVECTOR forward = DirectX::XMVector3Transform(
       DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
       DirectX::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, 0.0f));
@@ -163,6 +196,31 @@ void gfx::Camera::calcualteVector()
   DirectX::XMStoreFloat3(&m_up, up);
 
   m_needUpdate = true;
+#endif
+
+  // 1. 计算前方向向量（基于欧拉角）
+  DirectX::XMVECTOR forward = DirectX::XMVector3Transform(
+    DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
+    DirectX::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, 0.0f));
+  forward = DirectX::XMVector3Normalize(forward);
+  DirectX::XMStoreFloat3(&m_forward, forward);
+
+  // 2. 计算右方向向量（叉积）
+  DirectX::XMVECTOR worldUp = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+  DirectX::XMVECTOR right = DirectX::XMVector3Cross(forward, worldUp);
+  right = DirectX::XMVector3Normalize(right);
+  DirectX::XMStoreFloat3(&m_right, right);
+
+  // 3. 重新计算上方向向量（确保正交）
+  DirectX::XMVECTOR up = DirectX::XMVector3Cross(right, forward);
+  up = DirectX::XMVector3Normalize(up);
+  DirectX::XMStoreFloat3(&m_up, up);
+
+  // 4. 计算目标点
+  DirectX::XMVECTOR position = DirectX::XMLoadFloat3(&m_position);
+  DirectX::XMVECTOR target = DirectX::XMVectorAdd(position, forward);
+  DirectX::XMStoreFloat3(&m_target, target);
+
 }
 
 bool gfx::Camera::OnMouseMoved(MouseMoveEvent &e)
