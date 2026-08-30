@@ -83,28 +83,31 @@ void gfx::gfxTexture::Create(const std::wstring path, eTextureType type /*= eTex
 
 void gfx::gfxTexture::CreateWihteTexture()
 {
-   gfxContext& context = gfxContext::Get();
-    D3D11_TEXTURE2D_DESC texDesc;
-    ZeroMemory(&texDesc,sizeof(texDesc));
-    texDesc.ArraySize = 1;
-    texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-    texDesc.CPUAccessFlags = 0;
-    texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    texDesc.Width = m_width;
-    texDesc.Height = m_height;
-    texDesc.MipLevels = 1;
-    texDesc.MiscFlags = 0;
-    texDesc.SampleDesc.Quality = 0;
-    texDesc.SampleDesc.Count = 1;
-    texDesc.Usage = D3D11_USAGE_IMMUTABLE;
-    uint32_t data = 0xffffffff;
+  m_width = 1;
+  m_height = 1;
+  m_Channels = 4;
+  gfxContext& context = gfxContext::Get();
+  D3D11_TEXTURE2D_DESC texDesc;
+  ZeroMemory(&texDesc, sizeof(texDesc));
+  texDesc.ArraySize = 1;
+  texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+  texDesc.CPUAccessFlags = 0;
+  texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+  texDesc.Width = m_width;
+  texDesc.Height = m_height;
+  texDesc.MipLevels = 1;
+  texDesc.MiscFlags = 0;
+  texDesc.SampleDesc.Quality = 0;
+  texDesc.SampleDesc.Count = 1;
+  texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+  uint32_t data = 0xffffffff;
 
-    D3D11_SUBRESOURCE_DATA subdata;
-    subdata.pSysMem = &data;
+  D3D11_SUBRESOURCE_DATA subdata;
+  subdata.pSysMem = &data;
 
-    subdata.SysMemPitch = m_width * sizeof(uint32_t);
-    HR(context.m_pDevice->CreateTexture2D(&texDesc,&subdata,m_pTexture.GetAddressOf()));
-    HR(context.m_pDevice->CreateShaderResourceView(m_pTexture.Get(),nullptr,m_pShaderView.GetAddressOf()));
+  subdata.SysMemPitch = m_width * sizeof(uint32_t);
+  HR(context.m_pDevice->CreateTexture2D(&texDesc, &subdata, m_pTexture.GetAddressOf()));
+  HR(context.m_pDevice->CreateShaderResourceView(m_pTexture.Get(), nullptr, m_pShaderView.GetAddressOf()));
 }
 
 void gfx::gfxTexture::Bind()

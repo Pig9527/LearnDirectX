@@ -46,6 +46,14 @@ namespace gfx
     float pad;
   };
 
+  struct sPsLightMaterial
+  {
+    sMaterial material;
+    sDirectLight directLight;
+    DirectX::XMFLOAT3 eye;
+    float pad;
+  };
+
   class Context
   {
   public:

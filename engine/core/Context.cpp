@@ -7,8 +7,23 @@ namespace gfx
   int Context::sWindowHeight = 0;
   bool Context::sbRunning = true;
 
-  sMaterial  Context::arrMaterial[32];
-  sDirectLight  Context::arrDirectLight[32];
+  sMaterial  Context::arrMaterial[32] ={
+    { 
+      DirectX::XMFLOAT4{ 0.5f, 0.5f, 0.5f, 1.0f },
+      DirectX::XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f },
+      DirectX::XMFLOAT4{ 0.5f,0.5f,0.5f,1.0f }
+    }
+
+  };
+  sDirectLight  Context::arrDirectLight[32] = {
+    {
+      DirectX::XMFLOAT4{ 0.5f, 0.5f, 0.5f, 1.0f },
+      DirectX::XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f },
+      DirectX::XMFLOAT4{ 0.5f, 0.5f, 0.5f, 1.0f },
+      DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f)
+    }
+  };
   sSpotLight  Context::arrSpotLight[32];
   sPointLight  Context::arrPointLight[32];
+
 } // namespace gfx

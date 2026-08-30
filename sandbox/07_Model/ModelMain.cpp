@@ -9,24 +9,27 @@ void Render()
 
   DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
 
-  DirectX::XMMATRIX project = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2,
-    static_cast<float>(gfx::Context::sWindowWidth) / static_cast<float>(gfx::Context::sWindowHeight), 1.0f, 1000.0f));
-  
+  DirectX::XMMATRIX project = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV4,
+    static_cast<float>(gfx::Context::sWindowWidth) / static_cast<float>(gfx::Context::sWindowHeight), 0.1f, 1000.0f));
+
   DirectX::XMMATRIX view = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(
-    DirectX::XMVectorSet(0.0f,0.0f,-10.0f,1.0f),
+    DirectX::XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f),
     DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
     DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f)
   ));
 
-  Renderer::VertexConstantBuffer.mvp = project* view * world;
+  Renderer::VertexConstantBuffer.mvp = project * view * world;
   Renderer::VertexConstantBuffer.World = world;
   Renderer::VertexConstantBuffer.View = view;
   Renderer::VertexConstantBuffer.Project = project;
   Renderer::VertexConstantBuffer.WorldInvTranspose = DirectX::XMMatrixTranspose(
-      DirectX::XMMatrixInverse(nullptr,world)
+    DirectX::XMMatrixInverse(nullptr, world)
   );
 
+  Renderer::UploadMvp();
+
   BatchRender::DrawQuadNormalUv();
+
 
   ImguiLayer::RenderDefMaterial();
 
@@ -39,14 +42,16 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   app.Init(TEXT("Load model [house]"));
   app.RenderCallback = Render;
 
-  Renderer::Init();
   BatchRender::Init();
+
+  gfxTexture* pcubeTex = new gfxTexture();
+  pcubeTex->Create(L"assets/texture/WoodCrate.dds");
 
   {
     GemotryCube cube;
-    cube.Create(10.0f);
+    cube.Create(1.0f);
 
-    BatchRender::Draw(cube.Vertices);
+    BatchRender::Draw(cube.Vertices,1,pcubeTex);
   }
 
   gfx::gfxShaderVertex shaderVertex;
@@ -59,8 +64,9 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   gfx::gfxLayout<gfx::VertexPosColorNormalUv> layout;
   layout.CreateLayout(shaderVertex.GetByteBlod());
 
-  gfxTexture* pcubeTex;
-  pcubeTex->Create(L"assets/texture/WireFence.dds");
+  gfx::gfxRenderStateCache renderstate;
+  renderstate.Init();
+  gfxContext::Get().m_pDeviceContext->PSSetSamplers(0,1,renderstate.GetSampler(SamplerState::LinearWrap).GetAddressOf());
 
   BatchRender::End();
   app.Run();

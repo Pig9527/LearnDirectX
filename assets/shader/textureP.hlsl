@@ -49,7 +49,7 @@ float4 psMain(pixelIn pIn):SV_TARGET
   float4 ambient,diffuse,specular;
   ambient = diffuse = specular= float4(0.0f,0.0f,0.0f,0.0f);
 
-  float4 texColor = gTex.Sample(gSampler,pIn.texCoord*tiling);
+  float4 texColor = gTex.Sample(gSampler,pIn.texCoord*1);
   clip(texColor.a - 0.1f);
 
   float3 normal = normalize(pIn.normal);

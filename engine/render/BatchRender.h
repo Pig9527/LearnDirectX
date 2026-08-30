@@ -39,7 +39,7 @@ namespace gfx
     static void DrawQuadNormalUv();
     static void End();
 
-    static void Draw(std::vector<VertexPosColorNormalUv> vertices , gfxTexture* texture = nullptr);
+    static void Draw(std::vector<VertexPosColorNormalUv> vertices , int slot = 1, gfxTexture* texture = nullptr);
     
 
     static std::vector<sBatchOriginText> batchs;

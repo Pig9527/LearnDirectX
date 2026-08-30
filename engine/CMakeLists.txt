@@ -12,7 +12,6 @@ file(GLOB_RECURSE SOURCES
   )
 file(GLOB_RECURSE HEADERS 
   core/*.h
-  core/event/*.h
   Gemotry/*.h
   Graphic/*.h
   render/*.h 

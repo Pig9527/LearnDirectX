@@ -98,19 +98,19 @@ void gfx::ImguiLayer::RenderDefSpotLight()
 void gfx::ImguiLayer::RenderDefMaterial()
 {
 
-  ImguiLayer::Begin("Material");
-  
+  ImguiLayer::Begin("Setting");
+  ImGui::Text("Material");
   ImGui::ColorEdit4("ambient",&Context::arrMaterial[0].Ambient.x);
   ImGui::ColorEdit4("diffuse",&Context::arrMaterial[0].Diffuse.x);
   ImGui::ColorEdit4("specular",&Context::arrMaterial[0].Specular.x);
-  ImGui::ColorEdit4("specular",&Context::arrMaterial[0].Reflect.x);
+  ImGui::ColorEdit4("reflect",&Context::arrMaterial[0].Reflect.x);
 
   ImGui::PushID(1);
   ImGui::Text("DirectLight");
   ImGui::ColorEdit4("ambient",&Context::arrDirectLight[0].Ambient.x);
   ImGui::ColorEdit4("diffuse",&Context::arrDirectLight[0].Diffuse.x);
   ImGui::ColorEdit4("specular",&Context::arrDirectLight[0].Specular.x);
-  ImGui::ColorEdit4("direction",&Context::arrDirectLight[0].Direction.x);
+  ImGui::SliderFloat3("direction",&Context::arrDirectLight[0].Direction.x,-1.0,1.0,"%.02f");
   ImGui::PopID();
 
   ImGui::PushID(2);
@@ -121,7 +121,7 @@ void gfx::ImguiLayer::RenderDefMaterial()
   ImGui::ColorEdit3("position",&Context::arrPointLight[0].Position.x);
   ImGui::ColorEdit3("att",&Context::arrPointLight[0].Att.x);
 
-  ImGui::SliderFloat("att",&Context::arrPointLight[0].Range,-100.0,100.0,"%0.2f");
+  ImGui::SliderFloat("range",&Context::arrPointLight[0].Range,-100.0,100.0,"%0.2f");
 
   ImGui::PopID();
 
@@ -135,8 +135,8 @@ void gfx::ImguiLayer::RenderDefMaterial()
   ImGui::ColorEdit3("direction",&Context::arrSpotLight[0].Direction.x);
   ImGui::ColorEdit3("att",&Context::arrSpotLight[0].Att.x);
 
-  ImGui::SliderFloat("att",&Context::arrSpotLight[0].Range,-100.0,100.0,"%0.2f");
-  ImGui::SliderFloat("att",&Context::arrSpotLight[0].Spot,-100.0,100.0,"%0.2f");
+  ImGui::SliderFloat("range",&Context::arrSpotLight[0].Range,-100.0,100.0,"%0.2f");
+  ImGui::SliderFloat("spot",&Context::arrSpotLight[0].Spot,-100.0,100.0,"%0.2f");
   ImGui::PopID();
 
   ImguiLayer::End();

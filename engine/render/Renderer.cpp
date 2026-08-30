@@ -8,6 +8,7 @@ void gfx::Renderer::Init()
   gfxContext::Get().Initialize();
 
   VertexShaderConstantTransformObj.Create();
+  gfxContext::Get().m_pDeviceContext->VSSetConstantBuffers(0,1,VertexShaderConstantTransformObj.GetBuffer().GetAddressOf());
 }
 void gfx::Renderer::Clear()
 {
