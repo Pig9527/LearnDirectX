@@ -106,11 +106,6 @@ LRESULT CALLBACK gfx::NativeWindow::WindowHandleProc(HWND hwnd, UINT msg, WPARAM
     MouseMoveEvent event(x,y);
     m_callback(event);
   }
-  case WM_MOUSEWHEEL:
-  {
-    
-  }
-  return 0;
   case WM_CHAR:
   {
     KeyPressedEvent e((int)wParam,1);
@@ -118,7 +113,29 @@ LRESULT CALLBACK gfx::NativeWindow::WindowHandleProc(HWND hwnd, UINT msg, WPARAM
   }
   return 0;
 #endif
-
+  case WM_MOUSEWHEEL:
+  {
+    int wheel  = GET_WHEEL_DELTA_WPARAM(wParam);
+    Context::sMouseWheel = static_cast<float>(wheel)/120.0f;
+  }return 0;
+  case WM_MBUTTONDOWN:
+  {
+    Context::sbMButtonDown = true;
+    Context::sMouseDownX = GET_X_LPARAM(lParam);
+    Context::sMouseDownY = GET_Y_LPARAM(lParam);
+    Context::sMousePosX = GET_X_LPARAM(lParam);
+    Context::sMousePosY = GET_Y_LPARAM(lParam);
+  }return 0;
+  case WM_MBUTTONUP:
+  {
+  Context::sbMButtonDown = false;
+  }return 0;
+  case WM_MOUSEMOVE:
+  {
+    Context::sMousePosX = GET_X_LPARAM(lParam);
+    Context::sMousePosY = GET_Y_LPARAM(lParam);
+  }return 0;
+  
   case WM_DESTROY:
     Context::sbRunning = false;
     PostQuitMessage(0);

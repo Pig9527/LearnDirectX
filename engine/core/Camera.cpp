@@ -12,6 +12,7 @@ gfx::Camera::Camera()
       m_zoomSpeed(0.5f),
       m_pitch(0.0f), m_yaw(0.0f),
       m_needUpdate(true),
+      m_distance(10.0f),
       m_bmouseLeftButtonDown(true),
       m_bmouseMove(false),
       m_position(0.0f, 0.0f, -2.0f),
@@ -40,33 +41,55 @@ void gfx::Camera::Init()
 
 void gfx::Camera::Update(float dt)
 {
-  //if (Input::IsKeyPressed('W'))
-  //{
-  //  m_position.z += m_moveSpeed * dt * 0.02f;
-  //}
-  //if (Input::IsKeyPressed('S'))
-  //{
-  //  m_position.z -= m_moveSpeed * dt * 0.02f;
-  //}
-  //if (Input::IsKeyPressed('A'))
-  //{
-  //  m_position.x -= m_moveSpeed * dt * 0.02f;
-  //}
+  if (Input::IsKeyPressed('W'))
+  {
+    m_target.z += m_moveSpeed * dt * 0.02f;
+  }
+  if (Input::IsKeyPressed('S'))
+  {
+    m_target.z -= m_moveSpeed * dt * 0.02f;
+  }
+  if (Input::IsKeyPressed('A'))
+  {
+    m_target.x -= m_moveSpeed * dt * 0.02f;
+  }
 
-  //if (Input::IsKeyPressed('D'))
-  //{
-  //  m_position.x += m_moveSpeed * dt * 0.02f;
-  //}
-  //if (m_bmouseLeftButtonDown && m_bmouseMove)
-  //{
+  if (Input::IsKeyPressed('D'))
+  {
+    m_target.x += m_moveSpeed * dt * 0.02f;
+  }
 
-  //  m_position.x += m_mouseOffset.x * m_moveSpeed * 0.0f * dt;
-  //  m_position.y += m_mouseOffset.x * m_moveSpeed * 0.0f * dt;
-  //}
+  if(Context::sbMButtonDown)
+  {
+    DirectX::XMFLOAT2 offset = DirectX::XMFLOAT2{Context::sMousePosX - Context::sMouseDownX,Context::sMousePosY - Context::sMouseDownY};
+    TCHAR szStr[MAX_PATH];
+    if (offset.x != 0 && offset.y != 0)
+    {
+      StringCchPrintf(szStr, MAX_PATH, TEXT("down = (%d,%d),move = (%d,%d),Offset = (%f,%f)\n"),
+         Context::sMouseDownX, Context::sMouseDownY, 
+        Context::sMousePosX, Context::sMousePosY, 
+        offset.x, offset.y);
+      OutputDebugString(szStr);
+    }
+   
+    m_target.x += offset.x / 100.0f *dt*0.02f;
+    m_target.z += offset.y / 100.0f * dt * 0.02f;
+  }
+  if (m_bmouseLeftButtonDown && m_bmouseMove)
+  {
+
+    m_position.x += m_mouseOffset.x * m_moveSpeed * 0.0f * dt;
+    m_position.y += m_mouseOffset.x * m_moveSpeed * 0.0f * dt;
+  }
+
+  m_distance -= Context::sMouseWheel * m_zoomSpeed *1.0f;
+
+  m_distance = std::clamp(m_distance,0.1f,100.0f);
 
   //m_bmouseMove = false;
   calcualteVector();
   calculateProjectView();
+  Context::sMouseWheel = 0.0f;
 }
 
 void gfx::Camera::OnEvent(Event &e)
@@ -82,6 +105,7 @@ void gfx::Camera::Rotate(float pitch, float yaw)
 {
   m_pitch += pitch;
   m_yaw += yaw;
+#if 0
   if (m_pitch > DirectX::XM_PI *7.0f / 18.0f)
   {
     m_pitch = DirectX::XM_PI * 7.0f / 18.0f;
@@ -92,6 +116,7 @@ void gfx::Camera::Rotate(float pitch, float yaw)
   }
   //m_pitch = std::max(((-DirectX::XM_PI) / 2.0f + 0.01f), std::min((DirectX::XM_PI / 2.0f - 0.01f), m_pitch));
   m_needUpdate = true;
+#endif
 }
 
 void gfx::Camera::Zoom(float delta)
@@ -202,7 +227,7 @@ void gfx::Camera::calcualteVector()
 
   m_needUpdate = true;
 #endif
-
+# if 0
   // 1. 计算前方向向量（基于欧拉角）
   DirectX::XMVECTOR forward = DirectX::XMVector3Transform(
     DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
@@ -226,11 +251,39 @@ void gfx::Camera::calcualteVector()
   //DirectX::XMVECTOR position = DirectX::XMLoadFloat3(&m_position);
   //DirectX::XMVECTOR target = DirectX::XMVectorAdd(position, forward);
   //DirectX::XMStoreFloat3(&m_target, target);
+#else
 
-  DirectX::XMVECTOR forwarda = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&m_target), DirectX::XMLoadFloat3(&m_position));
-  DirectX::XMStoreFloat3(&m_forward, forwarda);
+  m_pitch = std::clamp(m_pitch, -DirectX::XM_PIDIV4, DirectX::XM_PIDIV4);
+
+  DirectX::XMMATRIX rotMatrix = DirectX::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, 0.0f);
+ 
+  DirectX::XMVECTOR localOffset = DirectX::XMVectorSet(0.0f, 5.0f, 10.0f, 0.0f);
+  localOffset = DirectX::XMVector3Normalize(localOffset);
+
+  DirectX::XMVECTOR offset = DirectX::XMVector3Transform(localOffset, rotMatrix);
+
+  offset = DirectX::XMVectorScale(offset, m_distance);
+
+  DirectX::XMVECTOR target = DirectX::XMLoadFloat3(&m_target);
+  DirectX::XMVECTOR position = DirectX::XMVectorAdd(target, offset);
+
+  DirectX::XMStoreFloat3(&m_position, position);
 
 
+  DirectX::XMVECTOR forward = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&m_target), DirectX::XMLoadFloat3(&m_position));
+  forward = DirectX::XMVector3Normalize(forward);
+
+  DirectX::XMVECTOR worldUp = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+  DirectX::XMVECTOR right = DirectX::XMVector3Cross(worldUp, forward);
+  right = DirectX::XMVector3Normalize(right);
+
+  DirectX::XMVECTOR up = DirectX::XMVector3Cross(forward, right);
+
+  DirectX::XMStoreFloat3(&m_forward, forward);
+  DirectX::XMStoreFloat3(&m_right, right);
+  DirectX::XMStoreFloat3(&m_up, up);
+
+#endif
 
 }
 

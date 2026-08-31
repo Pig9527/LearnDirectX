@@ -80,7 +80,15 @@ namespace gfx
     static int sWindowWidth;
     static int sWindowHeight;
     static bool sbRunning;
+    static bool sbMButtonDown;
+    static bool sbMButtonUp;
+    static float sMouseDownX;
+    static float sMouseDownY;
+    static float sMousePosX;
+    static float sMousePosY;
+    static float sMouseWheel;
 
+    static DirectX::XMFLOAT2 sMouseLastPos;
     static sVertexConstant sVertexConstantMVP;
     static sPsLightMaterial sDirectLightConst;
     static sTexTell sTextureTell;

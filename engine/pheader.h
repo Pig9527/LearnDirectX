@@ -1,6 +1,7 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <windowsx.h>
+#include <strsafe.h>
 
 #include <d3d11.h>
 #include <dxgi.h>

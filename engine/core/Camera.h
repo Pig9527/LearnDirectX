@@ -63,6 +63,7 @@ namespace gfx
     float m_pitch;
     float m_yaw;
     bool m_needUpdate;
+    float m_distance;
     DirectX::XMFLOAT2 m_mousePos;
     DirectX::XMFLOAT2 m_mouseOffset;
     bool m_bmouseLeftButtonDown;

@@ -1,4 +1,5 @@
 #include "core.h"
+#include <strsafe.h>
 using namespace gfx;
 using namespace DirectX;
 
@@ -64,13 +65,14 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   app.RenderCallback = Render;
 
   Context::CameraPos = DirectX::XMFLOAT3{ 0.0f,5.0f,-5.0f };
-
+  Context::sTextureTell.telling = 1.0f;
   constMag.Init();
   camera.Init();
 
 
   renderstate.Init();
   renderstate.SetSampleState(SamplerState::LinearWrap);
+  renderstate.SetRasteriazerState(RasterizerState::CullNone);
 
   BatchRender2D<VertexPosColorNormalUv>::Init();
 
@@ -78,10 +80,17 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   pcubeTex->Create(L"assets/texture/grass.dds");
 
   {
-    GemotryPlane plane;
-    plane.Create(XMFLOAT3{ -5,0,5 }, XMFLOAT3{ 10,0,10 });
 
-    BatchRender2D<VertexPosColorNormalUv>::Draw(plane.Vertices.data(),1,pcubeTex);
+    GemotryPlane plane;
+
+    for (float x = -2.0f; x <= 2.0; x += 0.5f)
+    {
+      for (float z = -2.0f; z <= 2.0f; z += 0.5f)
+      {
+        plane.Create(XMFLOAT3{ x,0,z }, XMFLOAT3{ 0.3,0,0.3 });
+        BatchRender2D<VertexPosColorNormalUv>::Draw(plane.Vertices.data(), 1, pcubeTex);
+      }
+    }
   }
 
   gfxShaderVertex shaderVertex;

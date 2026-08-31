@@ -6,6 +6,14 @@ namespace gfx
   int Context::sWindowWidth = 0;
   int Context::sWindowHeight = 0;
   bool Context::sbRunning = true;
+  float Context::sMouseWheel;
+  bool Context::sbMButtonDown;
+  bool Context::sbMButtonUp;
+  float Context::sMouseDownX;
+  float Context::sMouseDownY;
+  float Context::sMousePosX;
+  float Context::sMousePosY;
+  DirectX::XMFLOAT2 Context::sMouseLastPos;
   sVertexConstant Context::sVertexConstantMVP;
   sPsLightMaterial Context::sDirectLightConst;
   sTexTell  Context::sTextureTell = {10.0f};
