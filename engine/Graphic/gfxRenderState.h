@@ -45,6 +45,11 @@ namespace gfx
       ~gfxRenderStateCache();
 
       void Init();
+
+      void SetRasteriazerState(RasterizerState state);
+      void SetSampleState(SamplerState state,uint32_t slot = 0,uint32_t num = 1);
+      void SetBlendState(BlendState state);
+      void SetDepthStencilState(DepthStencilState state);
       comptr<ID3D11BlendState>& GetBlendState(BlendState state){return m_blendStateMaps[state];} 
       comptr<ID3D11SamplerState>& GetSampler(SamplerState state){return m_samplerStateMaps[state];} 
       comptr<ID3D11RasterizerState>& GetRasterizerState( RasterizerState state){return m_rasterizerStateMaps[state];} 

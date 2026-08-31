@@ -6,15 +6,6 @@
 namespace gfx
 {
 
-  struct sVertexConstant
-  {
-    DirectX::XMMATRIX mvp;
-    DirectX::XMMATRIX World;
-    DirectX::XMMATRIX View;
-    DirectX::XMMATRIX Project;
-    DirectX::XMMATRIX WorldInvTranspose;
-  };
-
   class Renderer
   {
     public:
@@ -23,9 +14,5 @@ namespace gfx
       static void DrawIndex(uint32_t cnt);
       static void Draw(uint32_t cnt);
       static void Present();
-
-      static void UploadMvp();
-      static sVertexConstant VertexConstantBuffer;
-      static gfxConstantBuffer<sVertexConstant> VertexShaderConstantTransformObj;
     };
 } // namespace gfx

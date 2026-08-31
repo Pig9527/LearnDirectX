@@ -1,14 +1,9 @@
 #include "Renderer.h"
 #include "Graphic/gfxContext.h"
 
-gfx::sVertexConstant gfx::Renderer::VertexConstantBuffer;
-gfx::gfxConstantBuffer<gfx::sVertexConstant> gfx::Renderer::VertexShaderConstantTransformObj;
 void gfx::Renderer::Init()
 {
   gfxContext::Get().Initialize();
-
-  VertexShaderConstantTransformObj.Create();
-  gfxContext::Get().m_pDeviceContext->VSSetConstantBuffers(0,1,VertexShaderConstantTransformObj.GetBuffer().GetAddressOf());
 }
 void gfx::Renderer::Clear()
 {
@@ -41,7 +36,3 @@ void gfx::Renderer::Present()
   gfxContext::Get().m_pSwapChain->Present(0,0);
 }
 
-void gfx::Renderer::UploadMvp()
-{
-  VertexShaderConstantTransformObj.Upload(VertexConstantBuffer);
-}

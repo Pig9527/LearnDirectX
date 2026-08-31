@@ -1,4 +1,4 @@
-#include "BatchRender.h"
+
 #include "Graphic/gfxIndexBuffer.h"
 #include "Graphic/gfxVertexBuffer.h"
 #include "Graphic/gfxTexture.h"
@@ -8,17 +8,19 @@
 #include "Renderer.h"
 #include "Graphic/gfxContext.h"
 
-constexpr int QUAD_VERTEX = 4;
-constexpr int QUAD_INDICES = 6;
-constexpr int QUAD_CNT = 500;
-
-constexpr int MAXVERTEX = QUAD_VERTEX * QUAD_CNT;
-constexpr int MAXINDICES = QUAD_INDICES * QUAD_CNT;
-
 
 namespace gfx
 {
- std::vector<sBatchOriginText> BatchRender::batchs;
+  constexpr int QUAD_VERTEX = 4;
+  constexpr int QUAD_INDICES = 6;
+  constexpr int QUAD_CNT = 500;
+
+  constexpr int MAXVERTEX = QUAD_VERTEX * QUAD_CNT;
+  constexpr int MAXINDICES = QUAD_INDICES * QUAD_CNT;
+
+
+  template<typename T>
+  std::vector<sBatchOriginText<T>> BatchRender2D<T>::batchs;
   struct sBatch
   {
     gfxIndexBuffer indicesBuffer;
@@ -38,7 +40,8 @@ namespace gfx
 
   sBatch s_batch;
 
-  void BatchRender::Init()
+  template <typename T>
+  void BatchRender2D<T>::Init()
   {
 
 
@@ -67,39 +70,32 @@ namespace gfx
 
     for (uint32_t i = 0; i < 32; i++)
     {
-      sBatchOriginText DefaultBatch;
+      sBatchOriginText<T> DefaultBatch;
       ZeroMemory(&DefaultBatch, sizeof(DefaultBatch));
       i== 0 ? DefaultBatch.pTexture = white : DefaultBatch.pTexture = nullptr;
 
-      DefaultBatch.pVertexPosColorBuffer = new VertexPosColor[MAXVERTEX];
-      DefaultBatch.pVertexPosColorNormalUvBuffer = new VertexPosColorNormalUv[MAXVERTEX];
-      DefaultBatch.pVertexPosColorUv = new VertexPosColorUv[MAXVERTEX];
- 
-      DefaultBatch.basePtrPosColorNormalUv = DefaultBatch.pVertexPosColorNormalUvBuffer;
-      DefaultBatch.currentPtrPosColorNormalUv = DefaultBatch.basePtrPosColorNormalUv;
+      DefaultBatch.pVerticesBuffer = new T[MAXVERTEX]();
+      DefaultBatch.pBaseVertexBuffer = DefaultBatch.pVerticesBuffer;
+      DefaultBatch.pCurrentVertexBuffer = DefaultBatch.pBaseVertexBuffer;
 
       batchs.push_back(DefaultBatch);
     }
     
     s_batch.constantBuffer.Create();
     gfxContext::Get().m_pDeviceContext->PSSetConstantBuffers(1,1,s_batch.constantBuffer.GetBuffer().GetAddressOf());
-    // s_batch.pVertexPosColorBuffer = new VertexPosColor[MAXVERTEX];
-    // s_batch.pVertexPosColorNormalUvBuffer = new VertexPosColorNormalUv[MAXVERTEX];
-    // s_batch.pVertexPosColorUv = new VertexPosColorUv[MAXVERTEX];
-
-    //
-
   }
-  void BatchRender::Begin()
+  template <typename T>
+  void BatchRender2D<T>::Begin()
   {
 
   }
-  void BatchRender::DrawQuadNormalUv()
+  template <typename T>
+  void BatchRender2D<T>::DrawQuad()
   {
     sPsLightMaterial material;
     material.material = Context::arrMaterial[0];
     material.directLight = Context::arrDirectLight[0];
-    material.eye = DirectX::XMFLOAT3(0.0f,0.0f,-10.0f);
+    material.eye = DirectX::XMFLOAT3(0.0f,10.0f,-10.0f);
     s_batch.constantBuffer.Upload(material);
     for (auto& batch : batchs)
     {
@@ -108,11 +104,12 @@ namespace gfx
       if(batch.indexCnt == 0)
         continue;
       batch.pTexture->Bind();
-      batch.vertexPosColorNormalUvObj->Bind();
+      batch.pVertices->Bind();
       Renderer::DrawIndex(batch.indexCnt);
     }
   }
-  void BatchRender::End()
+  template <typename T>
+  void BatchRender2D<T>::End()
   {
     for (auto& batch : batchs)
     {
@@ -120,13 +117,13 @@ namespace gfx
       //int size = (char*)batch.currentPtrPosColor - (char*)batch.basePtrPosColor;
       //batch.vertexPosColorObj->Create(size,batch.basePtrPosColor);
 
-      batch.vertexPosColorNormalUvObj = new gfxVertexBuffer<VertexPosColorNormalUv>();
-      int  size =  (char*)batch.currentPtrPosColorNormalUv - (char*)batch.basePtrPosColorNormalUv;
+      batch.pVertices = new gfxVertexBuffer<T>();
+      int  size =  (char*)batch.pCurrentVertexBuffer - (char*)batch.pBaseVertexBuffer;
       if (size == 0)
       {
         continue;
       }
-      batch.vertexPosColorNormalUvObj->Create(size,batch.basePtrPosColorNormalUv);
+      batch.pVertices->Create(size,batch.pBaseVertexBuffer);
 
       /*  batch.vertexPosColorUvObj = new gfxVertexBuffer<VertexPosColorUv>();
         size = (char*)batch.currentPtrPosColorUv - (char*)batch.basePtrPosColorUv;
@@ -134,19 +131,25 @@ namespace gfx
     }
     
   }
-  void BatchRender::Draw(std::vector<VertexPosColorNormalUv> vertices, int slot,gfxTexture *texture)
+  template <typename T>
+  void BatchRender2D<T>::Draw(T* vertices , int slot /*=1*/, gfxTexture* texture /*=nullptr*/)
   {
-    for (auto& vertex : vertices)
-    {
+    INT vertexSize = sizeof(T);
+    batchs[slot].pTexture = texture;
+    memcpy(batchs[slot].pCurrentVertexBuffer,vertices,sizeof(T) *4);
+    batchs[slot].pCurrentVertexBuffer += 4;
+    batchs[slot].indexCnt += 6;
+    // for (auto& vertex : vertices)
+    // {
 
-      batchs[slot].pTexture = texture;
-      batchs[slot].currentPtrPosColorNormalUv->position = vertex.position;
-      batchs[slot].currentPtrPosColorNormalUv->color = vertex.color;
-      batchs[slot].currentPtrPosColorNormalUv->normal = vertex.normal;
-      batchs[slot].currentPtrPosColorNormalUv->uv = vertex.uv;
-      batchs[slot].currentPtrPosColorNormalUv++;
-    }
-    batchs[slot].indexCnt += (vertices.size() / 4) * 6;
+    //   batchs[slot].pTexture = texture;
+    //   batchs[slot].currentPtrPosColorNormalUv->position = vertex.position;
+    //   batchs[slot].currentPtrPosColorNormalUv->color = vertex.color;
+    //   batchs[slot].currentPtrPosColorNormalUv->normal = vertex.normal;
+    //   batchs[slot].currentPtrPosColorNormalUv->uv = vertex.uv;
+    //   batchs[slot].currentPtrPosColorNormalUv++;
+    // }
+    // batchs[slot].indexCnt += (vertices.size() / 4) * 6;
 #if 0
       for (auto& batch : batchs)
       {

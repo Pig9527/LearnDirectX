@@ -8,6 +8,7 @@ struct Material
   float4 ambient;
   float4 diffuse;
   float4 specular;
+  float4 reflect;
 };
 
 struct DirectLight
@@ -49,8 +50,8 @@ float4 psMain(pixelIn pIn):SV_TARGET
   float4 ambient,diffuse,specular;
   ambient = diffuse = specular= float4(0.0f,0.0f,0.0f,0.0f);
 
-  float4 texColor = gTex.Sample(gSampler,pIn.texCoord*1);
-  clip(texColor.a - 0.1f);
+  float4 texColor = gTex.Sample(gSampler,pIn.texCoord*tiling);
+  //return  gLight.ambient * texColor;
 
   float3 normal = normalize(pIn.normal);
   float eye = normalize(gEye - pIn.positionW);

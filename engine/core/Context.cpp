@@ -6,6 +6,12 @@ namespace gfx
   int Context::sWindowWidth = 0;
   int Context::sWindowHeight = 0;
   bool Context::sbRunning = true;
+  sVertexConstant Context::sVertexConstantMVP;
+  sPsLightMaterial Context::sDirectLightConst;
+  sTexTell  Context::sTextureTell = {10.0f};
+  DirectX::XMFLOAT3 Context::CameraPos = DirectX::XMFLOAT3{0.0f,0.0f,-10.0f};
+  DirectX::XMFLOAT3 Context::CameraTarget=DirectX::XMFLOAT3{0.0f,0.0f,0.0f};
+  DirectX::XMFLOAT3 Context::CameraUp = DirectX::XMFLOAT3{0.0f,1.0f,0.0f};
 
   sMaterial  Context::arrMaterial[32] ={
     { 

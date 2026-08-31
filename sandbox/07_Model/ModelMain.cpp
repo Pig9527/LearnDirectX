@@ -2,33 +2,54 @@
 using namespace gfx;
 using namespace DirectX;
 
-
+gfxConstBufferMag constMag;
+Camera camera;
+gfxRenderStateCache renderstate;
 void Render()
 {
   Renderer::Clear();
 
+#if 0
   DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
 
   DirectX::XMMATRIX project = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV4,
     static_cast<float>(gfx::Context::sWindowWidth) / static_cast<float>(gfx::Context::sWindowHeight), 0.1f, 1000.0f));
 
+#if 1
   DirectX::XMMATRIX view = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(
-    DirectX::XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f),
+    DirectX::XMLoadFloat3(&Context::CameraPos),
+    DirectX::XMLoadFloat3(&Context::CameraTarget),
+    DirectX::XMLoadFloat3(&Context::CameraUp)
+  ));
+#else
+  DirectX::XMMATRIX view = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(
+    DirectX::XMVectorSet(0.0f, 10.0f, -10.0f, 1.0f),
     DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
     DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f)
   ));
 
-  Renderer::VertexConstantBuffer.mvp = project * view * world;
-  Renderer::VertexConstantBuffer.World = world;
-  Renderer::VertexConstantBuffer.View = view;
-  Renderer::VertexConstantBuffer.Project = project;
-  Renderer::VertexConstantBuffer.WorldInvTranspose = DirectX::XMMatrixTranspose(
+#endif
+
+  Context::sVertexConstantMVP.mvp = project * view * world;
+  Context::sVertexConstantMVP.World = world;
+  Context::sVertexConstantMVP.View = view;
+  Context::sVertexConstantMVP.Project = project;
+  Context::sVertexConstantMVP.WorldInvTranspose = DirectX::XMMatrixTranspose(
     DirectX::XMMatrixInverse(nullptr, world)
   );
+#endif
+ ImGuiIO& io = ImGui::GetIO();
+  if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
+  {
 
-  Renderer::UploadMvp();
-
-  BatchRender::DrawQuadNormalUv();
+    camera.Rotate(io.MouseDelta.y * 0.01f,io.MouseDelta.x * 0.01f);
+  }
+  camera.Update(0.16);
+  constMag.SetConstMVP(&camera);
+  constMag.Upload2VS();
+  constMag.Upload2PS();
+  constMag.UploadTex();
+  BatchRender2D<VertexPosColorNormalUv>::DrawQuad();
 
 
   ImguiLayer::RenderDefMaterial();
@@ -42,32 +63,40 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   app.Init(TEXT("Load model [house]"));
   app.RenderCallback = Render;
 
-  BatchRender::Init();
+  Context::CameraPos = DirectX::XMFLOAT3{ 0.0f,5.0f,-5.0f };
+
+  constMag.Init();
+  camera.Init();
+
+
+  renderstate.Init();
+  renderstate.SetSampleState(SamplerState::LinearWrap);
+
+  BatchRender2D<VertexPosColorNormalUv>::Init();
 
   gfxTexture* pcubeTex = new gfxTexture();
-  pcubeTex->Create(L"assets/texture/WoodCrate.dds");
+  pcubeTex->Create(L"assets/texture/grass.dds");
 
   {
-    GemotryCube cube;
-    cube.Create(1.0f);
+    GemotryPlane plane;
+    plane.Create(XMFLOAT3{ -5,0,5 }, XMFLOAT3{ 10,0,10 });
 
-    BatchRender::Draw(cube.Vertices,1,pcubeTex);
+    BatchRender2D<VertexPosColorNormalUv>::Draw(plane.Vertices.data(),1,pcubeTex);
   }
 
-  gfx::gfxShaderVertex shaderVertex;
+  gfxShaderVertex shaderVertex;
   shaderVertex.CompileFromFile("assets/shader/textureV.hlsl");
   shaderVertex.Bind();
-  gfx::gfxShaderPixel shaderPixel;
+  gfxShaderPixel shaderPixel;
   shaderPixel.CompileFromFile("assets/shader/textureP.hlsl");
   shaderPixel.Bind();
 
-  gfx::gfxLayout<gfx::VertexPosColorNormalUv> layout;
+  gfxLayout<VertexPosColorNormalUv> layout;
   layout.CreateLayout(shaderVertex.GetByteBlod());
 
-  gfx::gfxRenderStateCache renderstate;
-  renderstate.Init();
-  gfxContext::Get().m_pDeviceContext->PSSetSamplers(0,1,renderstate.GetSampler(SamplerState::LinearWrap).GetAddressOf());
 
-  BatchRender::End();
+  //gfxContext::Get().m_pDeviceContext->PSSetSamplers(0,1,renderstate.GetSampler(SamplerState::LinearWrap).GetAddressOf());
+
+  BatchRender2D<VertexPosColorNormalUv>::End();
   app.Run();
 }

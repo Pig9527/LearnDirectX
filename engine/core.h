@@ -13,9 +13,10 @@
 #include "Graphic/gfxShaderPixel.h"
 #include "Graphic/gfxShaderVertex.h"
 #include "Graphic/gfxWhitetexture.h"
+#include "Graphic/gfxConstBufferMag.h"
 
 #include "render/Renderer.h"
-#include "render/BatchRender.h"
+#include "render/BatchRender2D.h"
 
 #include "Gemotry/Vertex.h"
 #include "Gemotry/Gemotry.h"

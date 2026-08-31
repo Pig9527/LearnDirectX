@@ -99,9 +99,9 @@ namespace gfx
     {
       Vertices.resize(4);
       Indices.resize(6);
-      float w2 = size.x / 2.0f;
-      float h2 = size.y / 2.0f;
-      float d2 = size.z / 2.0f;
+      //float w2 = size.x / 2.0f;
+      //float h2 = size.y / 2.0f;
+      //float d2 = size.z / 2.0f;
 #if 1
 
 #if 0
@@ -110,10 +110,17 @@ namespace gfx
       Vertices[2].position = DirectX::XMFLOAT3{position.x - w2,position.y - h2,position.z + d2};
       Vertices[3].position = DirectX::XMFLOAT3{position.x - w2,position.y - h2,position.z - d2};
 #else
-      Vertices[0].position = DirectX::XMFLOAT3{ position.x - w2,position.y - h2,position.z - d2 };
-      Vertices[1].position = DirectX::XMFLOAT3{ position.x - w2,position.y - h2,position.z + d2 };
-      Vertices[2].position = DirectX::XMFLOAT3{ position.x + w2,position.y - h2,position.z + d2 };
-      Vertices[3].position = DirectX::XMFLOAT3{ position.x + w2,position.y - h2,position.z - d2 };
+      /*
+        1    2
+        |----|
+        |    |
+        |----|
+        4    3
+      */
+      Vertices[0].position = DirectX::XMFLOAT3{ position.x,position.y,position.z};
+      Vertices[1].position = DirectX::XMFLOAT3{ position.x + size.x,position.y,position.z };
+      Vertices[2].position = DirectX::XMFLOAT3{ position.x + size.x,position.y,position.z - size.z};
+      Vertices[3].position = DirectX::XMFLOAT3{ position.x,position.y,position.z - size.z};
 
 #endif
       DirectX::XMMATRIX translation = DirectX::XMMatrixTranslation(transform.x, transform.y, transform.z);
@@ -167,10 +174,10 @@ namespace gfx
       Vertices[2].uv = DirectX::XMFLOAT2{1.0f,1.0f};
       Vertices[3].uv = DirectX::XMFLOAT2{0.0f,1.0f};
 #else
-      Vertices[0].uv = DirectX::XMFLOAT2{ 0.0f,0.0f };
-      Vertices[1].uv = DirectX::XMFLOAT2{ 0.0f,1.0f };
-      Vertices[2].uv = DirectX::XMFLOAT2{ 1.0f,1.0f };
-      Vertices[3].uv = DirectX::XMFLOAT2{ 1.0f,0.0f };
+      Vertices[0].uv = DirectX::XMFLOAT2{ 0.0f,1.0f };
+      Vertices[1].uv = DirectX::XMFLOAT2{ 1.0f,1.0f };
+      Vertices[2].uv = DirectX::XMFLOAT2{ 1.0f,0.0f };
+      Vertices[3].uv = DirectX::XMFLOAT2{ 0.0f,0.0f };
 #endif
       Indices[0] = 0;Indices[1] = 1;Indices[2] = 2;
       Indices[3] = 2;Indices[4] = 3;Indices[5] = 0;

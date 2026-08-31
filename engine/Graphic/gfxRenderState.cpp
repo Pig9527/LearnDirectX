@@ -16,6 +16,42 @@ void gfx::gfxRenderStateCache::Init()
   initRasterizerState();
 }
 
+void gfx::gfxRenderStateCache::SetRasteriazerState(RasterizerState state)
+{
+  auto rasterizer = m_rasterizerStateMaps[state];
+  if (state == RasterizerState::Invalid)
+  {
+    gfxContext::Get().m_pDeviceContext->RSSetState(nullptr);
+    return;
+  }
+  gfxContext::Get().m_pDeviceContext->RSSetState(rasterizer.Get());
+}
+
+void gfx::gfxRenderStateCache::SetSampleState(SamplerState state,uint32_t slot/*=0*/,uint32_t num /*=1*/)
+{
+  auto sampler = m_samplerStateMaps[state];
+  gfxContext::Get().m_pDeviceContext->PSSetSamplers(slot,num,sampler.GetAddressOf());
+}
+
+void gfx::gfxRenderStateCache::SetBlendState(BlendState state)
+{
+  auto blend = m_blendStateMaps[state];
+  UINT mask = 0xffffffff;
+  if (state == BlendState::Invalid)
+  {
+    gfx::gfxContext::Get().m_pDeviceContext->OMSetBlendState(nullptr,nullptr,mask);
+    return;
+  }
+  
+  gfxContext::Get().m_pDeviceContext->OMSetBlendState(blend.Get(),nullptr,mask);
+}
+
+void gfx::gfxRenderStateCache::SetDepthStencilState(DepthStencilState state)
+{
+  auto depthStencil = m_depthStencilStateMaps[state];
+  gfxContext::Get().m_pDeviceContext->OMSetDepthStencilState(depthStencil.Get(),0);
+}
+
 void gfx::gfxRenderStateCache::initBlendState()
 {
   gfxContext &context = gfxContext::Get();

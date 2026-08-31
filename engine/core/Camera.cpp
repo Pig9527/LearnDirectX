@@ -20,7 +20,8 @@ gfx::Camera::Camera()
       m_right(1.0f, 0.0f, 0.0f),
       m_forward(0.0f, 0.0f, 1.0f)
 {
-  m_aspectRation = static_cast<float>(Context::sWindowWidth) / static_cast<float>(Context::sWindowHeight);
+
+
 }
 
 gfx::Camera::~Camera()
@@ -29,7 +30,10 @@ gfx::Camera::~Camera()
 
 void gfx::Camera::Init()
 {
-
+  m_aspectRation = static_cast<float>(Context::sWindowWidth) / static_cast<float>(Context::sWindowHeight);
+  m_position = Context::CameraPos;
+  m_up = Context::CameraUp;
+  m_target = Context::CameraTarget;
   calcualteVector();
   calculateProjectView();
 }
@@ -163,11 +167,12 @@ void gfx::Camera::calculateProjectView()
   m_projectMatrix = DirectX::XMMatrixTranspose(
       DirectX::XMMatrixPerspectiveFovLH(m_fov, m_aspectRation, m_near, m_far));
 
-  DirectX::XMVECTOR positin = DirectX::XMLoadFloat3(&m_position);
+  DirectX::XMVECTOR position = DirectX::XMLoadFloat3(&m_position);
   DirectX::XMVECTOR target = DirectX::XMLoadFloat3(&m_target);
   DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&m_up);
 
-  m_viewMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(positin, target, up));
+  m_viewMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(
+    DirectX::XMLoadFloat3(&m_position),DirectX::XMLoadFloat3(&m_target), DirectX::XMLoadFloat3(&m_up)));
 
   m_projectViewMatrix = m_projectMatrix * m_viewMatrix;
 }
@@ -207,19 +212,25 @@ void gfx::Camera::calcualteVector()
 
   // 2. 计算右方向向量（叉积）
   DirectX::XMVECTOR worldUp = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-  DirectX::XMVECTOR right = DirectX::XMVector3Cross(forward, worldUp);
+  DirectX::XMVECTOR right = DirectX::XMVector3Cross(worldUp, forward);
+  DirectX::XMStoreFloat3(&m_right, right);
   right = DirectX::XMVector3Normalize(right);
   DirectX::XMStoreFloat3(&m_right, right);
 
   // 3. 重新计算上方向向量（确保正交）
-  DirectX::XMVECTOR up = DirectX::XMVector3Cross(right, forward);
+  DirectX::XMVECTOR up = DirectX::XMVector3Cross(forward, right);
   up = DirectX::XMVector3Normalize(up);
   DirectX::XMStoreFloat3(&m_up, up);
 
-  // 4. 计算目标点
-  DirectX::XMVECTOR position = DirectX::XMLoadFloat3(&m_position);
-  DirectX::XMVECTOR target = DirectX::XMVectorAdd(position, forward);
-  DirectX::XMStoreFloat3(&m_target, target);
+  //// 4. 计算目标点
+  //DirectX::XMVECTOR position = DirectX::XMLoadFloat3(&m_position);
+  //DirectX::XMVECTOR target = DirectX::XMVectorAdd(position, forward);
+  //DirectX::XMStoreFloat3(&m_target, target);
+
+  DirectX::XMVECTOR forwarda = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&m_target), DirectX::XMLoadFloat3(&m_position));
+  DirectX::XMStoreFloat3(&m_forward, forwarda);
+
+
 
 }
 
