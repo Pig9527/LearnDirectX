@@ -6,39 +6,11 @@ using namespace DirectX;
 gfxConstBufferMag constMag;
 Camera camera;
 gfxRenderStateCache renderstate;
+Model* pmodel = nullptr;
 void Render()
 {
   Renderer::Clear();
 
-#if 0
-  DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
-
-  DirectX::XMMATRIX project = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV4,
-    static_cast<float>(gfx::Context::sWindowWidth) / static_cast<float>(gfx::Context::sWindowHeight), 0.1f, 1000.0f));
-
-#if 1
-  DirectX::XMMATRIX view = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(
-    DirectX::XMLoadFloat3(&Context::CameraPos),
-    DirectX::XMLoadFloat3(&Context::CameraTarget),
-    DirectX::XMLoadFloat3(&Context::CameraUp)
-  ));
-#else
-  DirectX::XMMATRIX view = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(
-    DirectX::XMVectorSet(0.0f, 10.0f, -10.0f, 1.0f),
-    DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
-    DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f)
-  ));
-
-#endif
-
-  Context::sVertexConstantMVP.mvp = project * view * world;
-  Context::sVertexConstantMVP.World = world;
-  Context::sVertexConstantMVP.View = view;
-  Context::sVertexConstantMVP.Project = project;
-  Context::sVertexConstantMVP.WorldInvTranspose = DirectX::XMMatrixTranspose(
-    DirectX::XMMatrixInverse(nullptr, world)
-  );
-#endif
  ImGuiIO& io = ImGui::GetIO();
   if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
   {
@@ -52,6 +24,12 @@ void Render()
   constMag.UploadTex();
   BatchRender2D<VertexPosColorNormalUv>::DrawQuad();
 
+  Context::sTextureTell.telling = 1;
+
+  constMag.UploadTex();
+  reinterpret_cast<ModelTexCoordNormal*>(pmodel)->Bind();
+  Renderer::DrawIndex(pmodel->GetIndexCnt());
+
 
   ImguiLayer::RenderDefMaterial();
 
@@ -64,7 +42,7 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   app.Init(TEXT("Load model [house]"));
   app.RenderCallback = Render;
 
-  Context::CameraPos = DirectX::XMFLOAT3{ 0.0f,5.0f,-5.0f };
+  Context::CameraPos = DirectX::XMFLOAT3{ 0.0f,500.0f,-100.0f };
   Context::sTextureTell.telling = 1.0f;
   constMag.Init();
   camera.Init();
@@ -83,14 +61,8 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
 
     GemotryPlane plane;
 
-    for (float x = -2.0f; x <= 2.0; x += 0.5f)
-    {
-      for (float z = -2.0f; z <= 2.0f; z += 0.5f)
-      {
-        plane.Create(XMFLOAT3{ x,0,z }, XMFLOAT3{ 0.3,0,0.3 });
-        BatchRender2D<VertexPosColorNormalUv>::Draw(plane.Vertices.data(), 1, pcubeTex);
-      }
-    }
+    plane.Create(XMFLOAT3{-100,0,-100 }, XMFLOAT3{ 200,0,200 });
+    BatchRender2D<VertexPosColorNormalUv>::Draw(plane.Vertices.data(), 1, pcubeTex);
   }
 
   gfxShaderVertex shaderVertex;
@@ -104,6 +76,9 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   layout.CreateLayout(shaderVertex.GetByteBlod());
 
 
+  pmodel = new ModelTexCoordNormal();
+  pmodel->LoadModelFromFile("assets/model/house/house.obj");
+  pmodel->Create();
   //gfxContext::Get().m_pDeviceContext->PSSetSamplers(0,1,renderstate.GetSampler(SamplerState::LinearWrap).GetAddressOf());
 
   BatchRender2D<VertexPosColorNormalUv>::End();

@@ -37,7 +37,6 @@ namespace gfx
     void gfxConstBufferMag::SetConstMVP(Camera *camera)
     {
 
-
       Context::sVertexConstantMVP.World = DirectX::XMMatrixIdentity();
       Context::sVertexConstantMVP.View = camera->GetViewMatrix();
       Context::sVertexConstantMVP.Project = camera->GetProjectMatrix();

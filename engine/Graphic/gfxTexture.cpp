@@ -27,58 +27,61 @@ gfx::gfxTexture::~gfxTexture()
 
 void gfx::gfxTexture::Create(const std::wstring path, eTextureType type /*= eTextureType::DDS*/)
 {
-  int width,height,channel;
+
   HRESULT hr = S_OK;
   if (type == eTextureType::DDS)
   {
     gfxContext& context = gfx::gfxContext::Get();
     hr = DirectX::CreateDDSTextureFromFile(context.m_pDevice.Get(),path.c_str(),nullptr,m_pShaderView.GetAddressOf());
   }
+}
+
+void gfx::gfxTexture::Create(const char* path)
+{
+  int width, height, channel;
+  m_filePath = path;
+  stbi_uc* data = stbi_load(m_filePath.c_str(), &width, &height, &channel, 0);
+  if (!data)
+  {
+    return;
+  }
+  m_width = width;
+  m_height = height;
+  m_Channels = channel;
+
+  D3D11_TEXTURE2D_DESC tdc = {};
+  tdc.ArraySize = 1;
+  tdc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+  tdc.CPUAccessFlags = 0;
+  tdc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+  tdc.Width = width;
+  tdc.Height = height;
+  tdc.SampleDesc.Count = 1;
+  tdc.SampleDesc.Quality = 0;
+  tdc.Usage = D3D11_USAGE_IMMUTABLE;
+  tdc.MipLevels = 1;
+  D3D11_SUBRESOURCE_DATA td = {};
+  char* convertDest = nullptr;
+  if (m_Channels == 3)
+  {
+    char* convertDest = new char[m_width * m_height * 4];
+    ConvertRGB2RGBA((char*)data, m_width, m_height, convertDest);
+    td.pSysMem = convertDest;
+  }
   else
   {
-    stbi_uc* data = stbi_load(m_filePath.c_str(),&width,&height,&channel,0);
-    if (!data)
-    {
-      return;
-    }
-    m_width = width;
-    m_height = height;
-    m_Channels = channel;
-
-    D3D11_TEXTURE2D_DESC tdc={};
-    tdc.ArraySize = 1;
-    tdc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-    tdc.CPUAccessFlags = 0;
-    tdc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    tdc.Width =width;
-    tdc.Height= height;
-    tdc.SampleDesc.Count = 1;
-    tdc.SampleDesc.Quality = 0;
-    tdc.Usage = D3D11_USAGE_IMMUTABLE;
-    tdc.MipLevels = 1;
-    D3D11_SUBRESOURCE_DATA td = {};
-    char* convertDest = nullptr;
-    if (m_Channels == 3)
-    {
-      char* convertDest = new char[m_width * m_height * 4];
-      ConvertRGB2RGBA((char*)data, m_width, m_height, convertDest);
-      td.pSysMem = convertDest;
-    }
-    else
-    {
-      td.pSysMem = data;
-    }
-
-    td.SysMemPitch = width * 4 * sizeof(char);
-
-    gfxContext& context = gfxContext::Get();
-
-    HR(context.m_pDevice->CreateTexture2D(&tdc,&td,m_pTexture.GetAddressOf()));
-    HR(context.m_pDevice->CreateShaderResourceView(m_pTexture.Get(),nullptr,m_pShaderView.GetAddressOf()));
-
-    if (convertDest) { delete[] convertDest; }
-    stbi_image_free(data);
+    td.pSysMem = data;
   }
+
+  td.SysMemPitch = width * 4 * sizeof(char);
+
+  gfxContext& context = gfxContext::Get();
+
+  HR(context.m_pDevice->CreateTexture2D(&tdc, &td, m_pTexture.GetAddressOf()));
+  HR(context.m_pDevice->CreateShaderResourceView(m_pTexture.Get(), nullptr, m_pShaderView.GetAddressOf()));
+
+  if (convertDest) { delete[] convertDest; }
+  stbi_image_free(data);
 }
 
 void gfx::gfxTexture::CreateWihteTexture()

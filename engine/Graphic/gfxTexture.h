@@ -17,6 +17,7 @@ namespace gfx
     ~gfxTexture();
 
     void Create(const std::wstring path, eTextureType type = eTextureType::DDS);
+    void Create(const char* path);
     void CreateWihteTexture();
     void Bind();
 
