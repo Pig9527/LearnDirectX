@@ -35,6 +35,7 @@ namespace gfx
   enum class DepthStencilState
   {
     Default,
+    LESSEQU,
     Invalid
   };
 

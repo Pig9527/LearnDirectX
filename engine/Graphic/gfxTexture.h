@@ -21,6 +21,8 @@ namespace gfx
     void CreateWihteTexture();
     void Bind();
 
+    comptr<ID3D11Texture2D>& GetTexture(){return m_pTexture;}
+    comptr<ID3D11ShaderResourceView>& GetShaderResourceView(){return m_pShaderView;}
   private:
     std::string m_filePath;
     bool m_bMipMaps = false;

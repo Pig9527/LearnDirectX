@@ -321,17 +321,34 @@ void gfx::gfxRenderStateCache::initSamplerState()
 
 void gfx::gfxRenderStateCache::initDepthStencilState()
 {
-  comptr<ID3D11DepthStencilState> pdepthStencil;
-  D3D11_DEPTH_STENCIL_DESC deptchStencilDesc;
-  ZeroMemory(&deptchStencilDesc, sizeof(deptchStencilDesc));
-  deptchStencilDesc.DepthEnable = true;
-  deptchStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-  deptchStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-  deptchStencilDesc.StencilEnable = false;
+  { 
+    comptr<ID3D11DepthStencilState> pdepthStencil;
+    D3D11_DEPTH_STENCIL_DESC deptchStencilDesc;
+    ZeroMemory(&deptchStencilDesc, sizeof(deptchStencilDesc));
+    deptchStencilDesc.DepthEnable = true;
+    deptchStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    deptchStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    deptchStencilDesc.StencilEnable = false;
 
-  HR(gfxContext::Get().m_pDevice->CreateDepthStencilState(&deptchStencilDesc, pdepthStencil.GetAddressOf()));
-  m_depthStencilStateDescMaps[DepthStencilState::Default] = deptchStencilDesc;
-  m_depthStencilStateMaps[DepthStencilState::Default] = pdepthStencil;
+    HR(gfxContext::Get().m_pDevice->CreateDepthStencilState(&deptchStencilDesc, pdepthStencil.GetAddressOf()));
+    m_depthStencilStateDescMaps[DepthStencilState::Default] = deptchStencilDesc;
+    m_depthStencilStateMaps[DepthStencilState::Default] = pdepthStencil;
+  }
+  { 
+    comptr<ID3D11DepthStencilState> pdepthStencil;
+    D3D11_DEPTH_STENCIL_DESC deptchStencilDesc;
+    ZeroMemory(&deptchStencilDesc, sizeof(deptchStencilDesc));
+    deptchStencilDesc.DepthEnable = true;
+    deptchStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    deptchStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    deptchStencilDesc.StencilEnable = false;
+    
+    HR(gfxContext::Get().m_pDevice->CreateDepthStencilState(&deptchStencilDesc, pdepthStencil.GetAddressOf()));
+    m_depthStencilStateDescMaps[DepthStencilState::LESSEQU] = deptchStencilDesc;
+    m_depthStencilStateMaps[DepthStencilState::LESSEQU] = pdepthStencil;
+  }
+
+
 }
 
 void gfx::gfxRenderStateCache::initRasterizerState()

@@ -41,12 +41,14 @@ add_subdirectory(sandbox/04_light)
 add_subdirectory(sandbox/05_Texture)
 add_subdirectory(sandbox/06_Camera)
 add_subdirectory(sandbox/07_Model)
+add_subdirectory(sandbox/08_skyBox)
 
 target_link_libraries(01_DrawATriangle engine)
 target_link_libraries(02_DrawARect engine)
 target_link_libraries(04_Light engine)
 target_link_libraries(05_Texture engine)
 target_link_libraries(07_model engine)
+target_link_libraries(08_skyBox engine)
 # file(GLOB_RECURSE SOURCES 
 #   "src/core/*.cpp" 
 #   "src/Graphic/*.cpp"

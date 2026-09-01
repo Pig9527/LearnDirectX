@@ -58,13 +58,13 @@ void gfx::gfxTexture::Create(const char* path)
   tdc.Height = height;
   tdc.SampleDesc.Count = 1;
   tdc.SampleDesc.Quality = 0;
-  tdc.Usage = D3D11_USAGE_IMMUTABLE;
+  tdc.Usage = D3D11_USAGE_DEFAULT;
   tdc.MipLevels = 1;
   D3D11_SUBRESOURCE_DATA td = {};
   char* convertDest = nullptr;
   if (m_Channels == 3)
   {
-    char* convertDest = new char[m_width * m_height * 4];
+    convertDest = new char[m_width * m_height * 4];
     ConvertRGB2RGBA((char*)data, m_width, m_height, convertDest);
     td.pSysMem = convertDest;
   }
