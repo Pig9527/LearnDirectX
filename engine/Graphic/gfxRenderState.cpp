@@ -339,7 +339,7 @@ void gfx::gfxRenderStateCache::initDepthStencilState()
     D3D11_DEPTH_STENCIL_DESC deptchStencilDesc;
     ZeroMemory(&deptchStencilDesc, sizeof(deptchStencilDesc));
     deptchStencilDesc.DepthEnable = true;
-    deptchStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    deptchStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
     deptchStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
     deptchStencilDesc.StencilEnable = false;
     

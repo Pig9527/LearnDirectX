@@ -183,4 +183,70 @@ namespace gfx
       Indices[3] = 2;Indices[4] = 3;Indices[5] = 0;
     }
   };
+
+
+
+
+  struct GeomtrySphere
+  {
+    std::vector<VertexPosColorNormalUv> Verteices;
+    std::vector<uint32_t> Indices;
+    float radius = 2.0f;
+    int slices = 32;
+    int stacks = 32;
+    void Create()
+    {
+        // 1. 生成顶点
+      for (int i = 0; i <= stacks; ++i)
+      {
+        float phi = i * DirectX::XM_PI / stacks;  // 从0到PI（北极到南极）
+        float y = radius * cosf(phi);
+        float r = radius * sinf(phi);
+        
+        for (int j = 0; j <= slices; ++j)
+        {
+            float theta = j * 2.0f * DirectX::XM_PI / slices;  // 从0到2PI（环绕一周）
+            float x = r * sinf(theta);
+            float z = r * cosf(theta);
+            
+            VertexPosColorNormalUv vertex;
+            vertex.position = DirectX::XMFLOAT3(x, y, z);
+            
+            // 纹理坐标（用于可能需要的贴图）
+            vertex.uv = DirectX::XMFLOAT2(
+                (float)j / slices,
+                (float)i / stacks
+            );
+            
+            vertex.color = DirectX::XMFLOAT4{1.0f,1.0f,1.0f,1.0f};
+
+            // 法线（归一化的位置向量）
+            DirectX::XMVECTOR pos = DirectX::XMLoadFloat3(&vertex.position);
+            DirectX::XMVECTOR norm = DirectX::XMVector3Normalize(pos);
+            DirectX::XMStoreFloat3(&vertex.normal, norm);
+            
+            Verteices.push_back(vertex);
+        }
+      }
+
+      // 2. 生成索引
+      for (int i = 0; i < stacks; ++i)
+      {
+        for (int j = 0; j < slices; ++j)
+        {
+            int a = i * (slices + 1) + j;
+            int b = a + slices + 1;
+            
+            // 两个三角形组成一个四边形
+            Indices.push_back(a);
+            Indices.push_back(b);
+            Indices.push_back(a + 1);
+            
+            Indices.push_back(b);
+            Indices.push_back(b + 1);
+            Indices.push_back(a + 1);
+        }
+      }
+    }
+  };
 } // namespace gfx

@@ -7,6 +7,7 @@ struct pixelIn
   float4 position:SV_POSITION;
   float3 positionW:POSITION;
   float4 color : COLOR;
+  float3 normal :NORMAL;
   float2 texCoord:TEXCOORD;
 };
 

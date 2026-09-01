@@ -4,6 +4,7 @@
 namespace gfx
 {
 
+
   static void ConvertRGBtoRGBA(char* data,int width,int height,char* dest)
   {
   //std::vector<char> rgba(width*height*4);
@@ -16,38 +17,33 @@ namespace gfx
   }
   }
 
-    void gfxTextureCube::Create()
+    void gfxTextureCube::Create(char** skyStr)
     {
       gfxContext& context = gfxContext::Get();
       m_initData.reserve(6);
 
-      char* skyTexturePath[] = {
-        "assets/texture/skybox/daylight0.png",
-        "assets/texture/skybox/daylight1.png",
-        "assets/texture/skybox/daylight2.png",
-        "assets/texture/skybox/daylight3.png",
-        "assets/texture/skybox/daylight4.png",
-        "assets/texture/skybox/daylight5.png"
-      };
+   
       int width, height, channels;
-      char* convertDest = nullptr;
+      // TODO: 内存泄漏
       stbi_uc* data = nullptr;
       for (size_t i = 0; i <= 6 -1; i++)
       {
-        data = stbi_load(skyTexturePath[i],&width,&height,&channels,0);
+        data = stbi_load(skyStr[i],&width,&height,&channels,0);
         if (!data)
         {
           continue;
         }
         D3D11_SUBRESOURCE_DATA initData;
+        ZeroMemory(&initData,sizeof(initData));
         if(channels == 3)
         {
-          if(!convertDest)
-          {
-            convertDest = new char[width * height * 4];
-          }
+          char* convertDest = nullptr;
+          convertDest = new char[width * height * 4];
+
+
           ConvertRGBtoRGBA((char*)data, width, height, convertDest);
           initData.pSysMem = convertDest;
+          m_convertRGBAs.push_back(convertDest);
         }
         else
         {
@@ -78,9 +74,11 @@ namespace gfx
       sr.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
       sr.TextureCube.MipLevels = desc.MipLevels;
       sr.TextureCube.MostDetailedMip = 0;
-      HRESULT hr = context.m_pDevice->CreateTexture2D(&desc, m_initData.data(), m_textures.GetAddressOf());
-      HR(context.m_pDevice->CreateShaderResourceView(m_textures.Get(),&sr,m_shaderResourceViews.GetAddressOf()));
-      if(convertDest){delete[] convertDest;}
+      HRESULT hr = S_OK;
+      hr = context.m_pDevice->CreateTexture2D(&desc, m_initData.data(), m_textures.GetAddressOf());
+      hr = context.m_pDevice->CreateShaderResourceView(m_textures.Get(),&sr,m_shaderResourceViews.GetAddressOf());
+
+      //if(convertDest){delete[] convertDest;}
 
     }
     void gfxTextureCube::Bind()

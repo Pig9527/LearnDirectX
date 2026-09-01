@@ -4,29 +4,54 @@
 gfx::Camera camera;
 gfx::gfxConstBufferMag constMag;
 
-gfx::gfxIndexBuffer indicesBuffer;
-gfx::gfxIndexBuffer cubeIndexBuffer;
-
-gfx::gfxVertexBuffer<gfx::VertexPosColorNormalUv> verticesBuffer;
-gfx::gfxVertexBuffer<gfx::VertexPosColorUv> cubeVerticesBuffer;
-gfx::gfxTextureCube textureCube;
-
+gfx::gfxIndexBuffer skyIndicesBuffer;
+gfx::gfxVertexBuffer<gfx::VertexPosColorNormalUv> skyVerticesBuffer;
+gfx::gfxTextureCube skyTexCube;
+gfx::gfxTextureCube skydaylightTexCube;
+gfx::gfxTextureCube skysunlightTexCube;
 gfx::gfxShaderVertex vertexShader;
 gfx::gfxShaderPixel pixelShader;
+gfx::gfxLayout<gfx::VertexPosColorNormalUv> skyinputlayout;
 
+gfx::gfxVertexBuffer<gfx::VertexPosColorNormalUv> cubeVerticesBuffer;
+gfx::gfxIndexBuffer cubeIndexBuffer;
 gfx::gfxShaderVertex DefvertexShader;
 gfx::gfxShaderPixel DefpixelShader;
-
 gfx::gfxTexture cubeTexture;
-// char* skyTexturePath[] = {
-//   "assets/texture/skybox/daylight0.png",
-//   "assets/texture/skybox/daylight1.png",
-//   "assets/texture/skybox/daylight2.png",
-//   "assets/texture/skybox/daylight3.png",
-//   "assets/texture/skybox/daylight4.png",
-//   "assets/texture/skybox/daylight5.png"
-// };
+gfx::gfxLayout<gfx::VertexPosColorNormalUv> cubeinputlayout;
 
+gfx::gfxRenderStateCache renderState;
+int sphereSkyIndexCnt = 0;
+
+char* skydaylightTexturePath[] = {
+  "assets/texture/skybox/daylight0.png",
+  "assets/texture/skybox/daylight1.png",
+  "assets/texture/skybox/daylight2.png",
+  "assets/texture/skybox/daylight3.png",
+  "assets/texture/skybox/daylight4.png",
+  "assets/texture/skybox/daylight5.png"
+};
+
+char* skyTexturePath[] = {
+  "assets/texture/skybox/right.jpg",
+  "assets/texture/skybox/left.jpg",
+  "assets/texture/skybox/top.jpg",
+  "assets/texture/skybox/bottom.jpg",
+  "assets/texture/skybox/front.jpg",
+  "assets/texture/skybox/back.jpg"
+};
+
+char* skysunTexturePath[] = {
+  "assets/texture/skybox/sunset_posX.bmp",
+  "assets/texture/skybox/sunset_negX.bmp",
+  "assets/texture/skybox/sunset_posY.bmp",
+  "assets/texture/skybox/sunset_negY.bmp",
+  "assets/texture/skybox/sunset_posZ.bmp",
+  "assets/texture/skybox/sunset_negZ.bmp"
+};
+
+  char* combstr[] ={"skybox1","skybox2","sun"};
+  int currentSky = 0;
 gfx::gfxTexture* textObj[6] = {};
 
 void Render()
@@ -44,13 +69,19 @@ void Render()
   constMag.Upload2VS();
   constMag.Upload2PS();
 
+  renderState.SetDepthStencilState(gfx::DepthStencilState::LESSEQU);
+  //renderState.SetRasteriazerState(gfx::RasterizerState::WireFrame);
   vertexShader.Bind();
   pixelShader.Bind();
-  verticesBuffer.Bind();
-  indicesBuffer.Bind();
-  textureCube.Bind();
-  gfx::Renderer::DrawIndex(36);
+  skyVerticesBuffer.Bind();
+  skyIndicesBuffer.Bind();
+  if(currentSky == 0)   skyTexCube.Bind();
+  else if(currentSky == 1) skydaylightTexCube.Bind();
+  else if(currentSky == 2) skysunlightTexCube.Bind();
 
+  gfx::Renderer::DrawIndex(sphereSkyIndexCnt);
+
+  renderState.SetDepthStencilState(gfx::DepthStencilState::Default);
   DefvertexShader.Bind();
   DefpixelShader.Bind();
   cubeVerticesBuffer.Bind();
@@ -60,6 +91,8 @@ void Render()
 
   gfx::ImguiLayer::Begin("setting");
 
+
+  ImGui::Combo("shybox",&currentSky,combstr,ARRAYSIZE(combstr));
   gfx::ImguiLayer::End();
 
   gfx::Renderer::Present();
@@ -95,11 +128,11 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   app.RenderCallback = Render;
   app.Init(L"SkyBox");
 
-  gfx::gfxRenderStateCache renderState;
+
 
   renderState.Init();
-  renderState.SetDepthStencilState(gfx::DepthStencilState::LESSEQU);
-  renderState.SetSampleState(gfx::SamplerState::AnisotropicWrap);
+
+  renderState.SetSampleState(gfx::SamplerState::AnisotropicClamp);
   renderState.SetRasteriazerState(gfx::RasterizerState::CullNone);
 
 
@@ -108,14 +141,16 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
 
 
   {
-    gfx::GemotryCube cube;
-    cube.Create(2.0f);
+    gfx::GeomtrySphere sphere;
+    sphere.Create();
 
-    indicesBuffer.Create(cube.Indices.size(), cube.Indices.data());
+    skyIndicesBuffer.Create(sphere.Indices.size(), sphere.Indices.data());
     //indicesBuffer.Bind();
 
-    verticesBuffer.Create(cube.Vertices.size() * sizeof(gfx::VertexPosColorNormalUv),
-      (gfx::VertexPosColorNormalUv*)cube.Vertices.data());
+    skyVerticesBuffer.Create(sphere.Verteices.size() * sizeof(gfx::VertexPosColorNormalUv),
+      (gfx::VertexPosColorNormalUv*)sphere.Verteices.data());
+
+    sphereSkyIndexCnt = sphere.Indices.size();
     //verticesBuffer.Bind();
   }
   {
@@ -125,36 +160,26 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
     cubeIndexBuffer.Create(cube.Indices.size(), cube.Indices.data());
     //cubeIndexBuffer.Bind();
 
-    cubeVerticesBuffer.Create(cube.Vertices.size() * sizeof(gfx::VertexPosColorUv),
-      (gfx::VertexPosColorUv*)cube.Vertices.data());
+    cubeVerticesBuffer.Create(cube.Vertices.size() * sizeof(gfx::VertexPosColorNormalUv),
+      (gfx::VertexPosColorNormalUv*)cube.Vertices.data());
     //verticesBuffer.Bind();
   }
 
 
   vertexShader.CompileFromFile("assets/shader/skybox/skyboxV.hlsl");
-  //vertexShader.Bind();
-
-
   pixelShader.CompileFromFile("assets/shader/skybox/skyboxP.hlsl");
- // pixelShader.Bind();
-
+  skyTexCube.Create(skyTexturePath);
+  skydaylightTexCube.Create(skydaylightTexturePath);
+  skysunlightTexCube.Create(skysunTexturePath);
 
   DefvertexShader.CompileFromFile("assets/shader/skybox/defV.hlsl");
-  //vertexShader.Bind();
-
-
   DefpixelShader.CompileFromFile("assets/shader/skybox/defP.hlsl");
-  //.Bind();
   cubeTexture.Create(L"assets/texture/WoodCrate.dds");
   
-  textureCube.Create();
-  textureCube.Bind();
 
-
-
-  gfx::gfxLayout<gfx::VertexPosColorNormalUv> inputlayout;
-  inputlayout.CreateLayout(vertexShader.GetByteBlod());
-
+ 
+  skyinputlayout.CreateLayout(vertexShader.GetByteBlod());
+  cubeinputlayout.CreateLayout(DefvertexShader.GetByteBlod());
 
   app.Run();
   return 0;
