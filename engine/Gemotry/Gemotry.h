@@ -187,7 +187,7 @@ namespace gfx
 
 
 
-  struct GeomtrySphere
+  struct GeometrySphere
   {
     std::vector<VertexPosColorNormalUv> Verteices;
     std::vector<uint32_t> Indices;

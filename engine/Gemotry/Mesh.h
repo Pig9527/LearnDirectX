@@ -1,19 +1,33 @@
 #pragma once
 #include "pheader.h"
-#include "Geometry.h"
 #include "gfxVertexBuffer.h"
 #include "gfxIndexBuffer.h"
+#include "gfxTexture.h"
 
 namespace gfx
 {
-  // class Mesh
-  // {
-  //   public:
-  //     Mesh() = default;
-  //     ~Mesh() = default;
 
-  //   private:
-  //     std::vector<> m_vertices;
-  //     std::vector<uint32_t> m_indices;
-  // };
+  struct sMeshCreateDesc
+  {
+    // stand normal diffuse spcular
+    wchar_t* wTexFilePath[4];
+    char* texFilePath[4];
+    eTextureType type = eTextureType::DDS;
+
+  };
+
+
+  template<typename T>
+  class Mesh
+  {
+    public:
+      Mesh() = default;
+      ~Mesh() = default;
+
+      Mesh(const Mesh& rsh) = delete;
+      Mesh& operator=(const Mesh& rsh) = delete;
+
+
+    private:
+  };
 } // namespace gfx

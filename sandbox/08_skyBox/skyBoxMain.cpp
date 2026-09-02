@@ -141,7 +141,7 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
 
 
   {
-    gfx::GeomtrySphere sphere;
+    gfx::GeometrySphere sphere;
     sphere.Create();
 
     skyIndicesBuffer.Create(sphere.Indices.size(), sphere.Indices.data());

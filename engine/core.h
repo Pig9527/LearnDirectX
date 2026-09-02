@@ -14,6 +14,7 @@
 #include "Graphic/gfxShaderVertex.h"
 #include "Graphic/gfxWhitetexture.h"
 #include "Graphic/gfxConstBufferMag.h"
+#include "Graphic/gfxShaderLayoutResouce.h"
 
 #include "render/Renderer.h"
 #include "render/BatchRender2D.h"
@@ -21,6 +22,9 @@
 #include "Gemotry/Vertex.h"
 #include "Gemotry/Gemotry.h"
 #include "Gemotry/Model.h"
+#include "Gemotry/CubeMesh.h"
+#include "Gemotry/SkyBoxMesh.h"
+#include "Gemotry/SphereMesh.h"
 
 
 #include "imgui/imgui.h"
