@@ -5,27 +5,37 @@ namespace gfx
     void gfxConstBufferMag::Init()
     {
       gfxContext& context = gfxContext::Get();
+      m_MvpConstant.SetSlot(0);
       m_MvpConstant.Create();
-      context.m_pDeviceContext->VSSetConstantBuffers(0, 1, m_MvpConstant.GetBuffer().GetAddressOf());
+      //context.m_pDeviceContext->VSSetConstantBuffers(0, 1, m_MvpConstant.GetBuffer().GetAddressOf());
 
+      m_WorldConstant.SetSlot(3);
+      m_WorldConstant.Create();
+      
+      //context.m_pDeviceContext->VSSetConstantBuffers(1, 1, m_WorldConstant.GetBuffer().GetAddressOf());
+
+
+      m_DirectLightConstant.SetSlot(1);
       m_DirectLightConstant.Create();
-      context.m_pDeviceContext->PSSetConstantBuffers(1, 1, m_DirectLightConstant.GetBuffer().GetAddressOf());
+      //context.m_pDeviceContext->PSSetConstantBuffers(1, 1, m_DirectLightConstant.GetBuffer().GetAddressOf());
+      m_TexRepeatConstant.SetSlot(2);
       m_TexRepeatConstant.Create();
-      context.m_pDeviceContext->PSSetConstantBuffers(2, 1, m_TexRepeatConstant.GetBuffer().GetAddressOf());
+     // context.m_pDeviceContext->PSSetConstantBuffers(2, 1, m_TexRepeatConstant.GetBuffer().GetAddressOf());
     }
 
     void gfxConstBufferMag::Upload2VS()
     {
       m_MvpConstant.Upload(Context::sVertexConstantMVP);
+      m_WorldConstant.Upload(Context::sWorld);
   
     }
 
     void gfxConstBufferMag::Upload2PS()
     {
-      Context::sDirectLightConst.material = Context::arrMaterial[0];
-      Context::sDirectLightConst.directLight = Context::arrDirectLight[0];
-      Context::sDirectLightConst.eye = Context::CameraPos;
-      m_DirectLightConstant.Upload(Context::sDirectLightConst);
+       Context::sDirectLightConst.material = Context::arrMaterial[0];
+       Context::sDirectLightConst.directLight = Context::arrDirectLight[0];
+       Context::sDirectLightConst.eye = Context::CameraPos;
+       m_DirectLightConstant.Upload(Context::sDirectLightConst);
 
     }
 

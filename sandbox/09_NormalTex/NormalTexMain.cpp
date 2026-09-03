@@ -71,13 +71,43 @@ void Render()
   for(auto& entity:scenes)
   {
     auto& transform = entity->GetComponent<gfx::TransformComponent>();
-    gfx::Context::sVertexConstantMVP.World = DirectX::XMMatrixTranspose(
-      DirectX::XMMatrixTranslation(transform->Position.x,transform->Position.y,transform->Position.z) *
-      DirectX::XMMatrixScaling(transform->Scale.x,transform->Scale.y,transform->Scale.z));
-    
+    auto& mesh = entity->GetComponent<gfx::MeshComponent>();
+    /*gfx::Context::sVertexConstantMVP.World = DirectX::XMMatrixTranspose(
+      DirectX::XMMatrixTranslation(transform->Position.x, transform->Position.y, transform->Position.z) *
+      DirectX::XMMatrixScaling(transform->Scale.x, transform->Scale.y, transform->Scale.z));
+    */
+    if (mesh->MeshType == gfx::MeshComponent::eMeshType::Sphere)
+    {
+      static float speed = 0.016f;
+      if (transform->Position.y > 8.0f)
+      {
+        speed = -0.001;
+      }
+      else if (transform->Position.y < 5.0f)
+      {
+        speed = 0.001;
+      }
+      transform->Position.y += speed;
+    }
+
+    gfx::Context::sWorld.world = DirectX::XMMatrixTranspose(
+      DirectX::XMMatrixTranslation(transform->Position.x, transform->Position.y, transform->Position.z) *
+      DirectX::XMMatrixScaling(transform->Scale.x, transform->Scale.y, transform->Scale.z));
+    gfx::Context::sWorld.worldInvTranspose = DirectX::XMMatrixTranspose(
+      DirectX::XMMatrixInverse(nullptr, gfx::Context::sWorld.world)
+    );
     constMag.SetConstMVP(&camera);
     constMag.Upload2VS();
 
+    if (mesh->MeshType == gfx::MeshComponent::eMeshType::Plane)
+    {
+      gfx::Context::sTextureTell.telling = 10.0f;
+    }
+    else
+    {
+      gfx::Context::sTextureTell.telling = 1.0f;
+    }
+    constMag.UploadTex();
     entity->Update();
   }
   //cube->Update();
@@ -105,7 +135,7 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   app.RenderCallback = Render;
 
   app.Init(TEXT("normal"));
-#define PLANE_WIDTH  10.0f
+#define PLANE_WIDTH  20.0f
 
   DirectX::XMFLOAT3 cylinderPos[] =
   {
@@ -115,7 +145,14 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
     DirectX::XMFLOAT3{PLANE_WIDTH/2.0f,1.1f,-PLANE_WIDTH/2.0f},
     DirectX::XMFLOAT3{-PLANE_WIDTH/2.0f,1.1f,-PLANE_WIDTH/2.0f},
   };
-  
+
+  std::shared_ptr<gfx::Entity> plane;
+  plane = std::make_shared<gfx::Entity>("plane");
+  plane->AddComponent<gfx::TransformComponent>(DirectX::XMFLOAT3{ 0.0f,-1.0f,0.0f }, DirectX::XMFLOAT3{ PLANE_WIDTH,1.0f,PLANE_WIDTH });
+  plane->AddComponent<gfx::MaterialTextureComponent>(L"assets/texture/floor.dds");
+  plane->AddComponent<gfx::MeshComponent>(gfx::MeshComponent::eMeshType::Plane);
+  scenes.push_back(plane);
+
   for (size_t i = 0; i < 5; i++)
   {
     std::shared_ptr<gfx::Entity> sphere;
@@ -144,12 +181,7 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
     // scenes.push_back(cube);
   }
   
-  std::shared_ptr<gfx::Entity> plane;
-  plane = std::make_shared<gfx::Entity>("plane");
-  plane->AddComponent<gfx::TransformComponent>(DirectX::XMFLOAT3{0.0f,-1.0f,0.0f},DirectX::XMFLOAT3{PLANE_WIDTH,1.0f,PLANE_WIDTH});
-  plane->AddComponent<gfx::MaterialTextureComponent>(L"assets/texture/floor.dds");
-  plane->AddComponent<gfx::MeshComponent>(gfx::MeshComponent::eMeshType::Plane);
-  scenes.push_back(plane);
+
 
 
 

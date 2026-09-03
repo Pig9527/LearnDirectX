@@ -15,6 +15,7 @@ namespace gfx
   float Context::sMousePosY;
   DirectX::XMFLOAT2 Context::sMouseLastPos;
   sVertexConstant Context::sVertexConstantMVP;
+  sWorldMatrix Context::sWorld;
   sPsLightMaterial Context::sDirectLightConst;
   sTexTell  Context::sTextureTell = {10.0f};
   DirectX::XMFLOAT3 Context::CameraPos = DirectX::XMFLOAT3{0.0f,0.0f,-10.0f};

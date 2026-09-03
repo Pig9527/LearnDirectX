@@ -1,4 +1,10 @@
 
+cbuffer PStexture:register(b2)
+{
+  float tiling;
+  float3 pad2;
+}
+
 Texture2D gTex :register(t1);
 Texture2D gNormal:register(t2);
 

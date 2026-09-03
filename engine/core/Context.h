@@ -96,6 +96,7 @@ namespace gfx
 
     static DirectX::XMFLOAT2 sMouseLastPos;
     static sVertexConstant sVertexConstantMVP;
+    static sWorldMatrix sWorld;
     static sPsLightMaterial sDirectLightConst;
     static sTexTell sTextureTell;
     static sMaterial arrMaterial[32];

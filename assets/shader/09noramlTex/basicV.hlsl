@@ -35,11 +35,11 @@ pixelIn vsMain(vertexIn vIn)
 {
 
   pixelIn pIn;
-  pIn.position = mul(float4(vIn.position,1.0f),mvp);
+  //n.position = mul(float4(vIn.position,1.0f),mvp);
   //float4 worldPos = mul(float4(vIn.position,1.0f),gWorld);
   //float4 viewPos = mul(worldPos,view);
   //float4 clipPos = mul(viewPos,project);
-  //pIn.position = mul(mul(mul(float4(vIn.position, 1.0), gWorld), view), project);
+  pIn.position = mul(mul(mul(float4(vIn.position, 1.0), gWorld), view), project);
 
   pIn.color = vIn.color;
   float4 poW = mul(float4(vIn.position,1.0f),gWorld);

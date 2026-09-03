@@ -20,7 +20,7 @@ namespace gfx
       gfxConstantBuffer& operator=(const gfxConstantBuffer& rhs) = delete;
       
       void Create();
-
+      void SetSlot(int slot) { m_Slot = slot; }
       void Upload(const T& data);
 
       comptr<ID3D11Buffer>& GetBuffer(){return m_pBuffer;}

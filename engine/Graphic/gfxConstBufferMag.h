@@ -24,5 +24,6 @@ namespace gfx
     gfxConstantBuffer<sVertexConstant> m_MvpConstant;
     gfxConstantBuffer<sPsLightMaterial> m_DirectLightConstant;
     gfxConstantBuffer<sTexTell> m_TexRepeatConstant;
+    gfxConstantBuffer<sWorldMatrix> m_WorldConstant;
   };
 }

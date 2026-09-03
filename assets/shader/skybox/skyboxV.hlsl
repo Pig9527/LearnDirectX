@@ -1,3 +1,8 @@
+cbuffer cWorldMatrix:register(b3)
+{
+  matrix gWorld;
+  matrix gWordlInvTranspose;
+};
 cbuffer VertexConstBuffer:register(b0)
 {
   matrix mvp;
