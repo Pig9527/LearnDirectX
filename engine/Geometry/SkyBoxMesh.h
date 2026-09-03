@@ -5,7 +5,7 @@
 #include "gfxLayout.h"
 #include "gfxContext.h"
 #include "gfxRenderState.h"
-#include "Gemotry.h"
+#include "Geometry.h"
 #include "gfxShaderVertex.h"
 #include "gfxShaderPixel.h"
 #include "Renderer.h"
@@ -39,9 +39,9 @@ namespace gfx
   inline void SkyBoxMesh<T>::Create(char** skyboxfilePath,char** skyboxShaderPath)
   {
     GeometrySphere sphere;
-    sphere.Create();
+    sphere.GenerateSphere();
     m_pVerticesBuffer = std::make_unique<gfxVertexBuffer<T>>();
-    m_pVerticesBuffer->Create(sphere.Verteices.size() * sizeof(T),sphere.Verteices.data());
+    m_pVerticesBuffer->Create(sphere.Vertices.size() * sizeof(T),sphere.Vertices.data());
 
     m_pIndexBuffer = std::make_unique<gfxIndexBuffer>();
     m_pIndexBuffer->Create(sphere.Indices.size(),sphere.Indices.data());

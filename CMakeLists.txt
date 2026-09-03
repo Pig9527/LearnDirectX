@@ -23,7 +23,8 @@ add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 set(INCLUDE_DIR  core
   ${CMAKE_SOURCE_DIR}/engine
   ${CMAKE_SOURCE_DIR}/engine/core/event
-  ${CMAKE_SOURCE_DIR}/engine/Gemotry
+  ${CMAKE_SOURCE_DIR}/engine/Geometry
+  ${CMAKE_SOURCE_DIR}/engine/Entity
   ${CMAKE_SOURCE_DIR}/engine/Graphic
   ${CMAKE_SOURCE_DIR}/engine/render
   ${CMAKE_SOURCE_DIR}/engine/window

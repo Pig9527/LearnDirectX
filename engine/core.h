@@ -16,15 +16,25 @@
 #include "Graphic/gfxConstBufferMag.h"
 #include "Graphic/gfxShaderLayoutResouce.h"
 
+#include "Entity/Entity.h"
+#include "Entity/Component.h"
+#include "Entity/MeshComponent.h"
+#include "Entity/TransformComponent.h"
+#include "Entity/MaterialComponent.h"
+#include "Entity/MaterialTextureComponent.h"
+#include "Entity/LightComponent.h"
+#include "Entity/ColorComponent.h"
+
+
 #include "render/Renderer.h"
 #include "render/BatchRender2D.h"
 
-#include "Gemotry/Vertex.h"
-#include "Gemotry/Gemotry.h"
-#include "Gemotry/Model.h"
-#include "Gemotry/CubeMesh.h"
-#include "Gemotry/SkyBoxMesh.h"
-#include "Gemotry/SphereMesh.h"
+#include "Geometry/Vertex.h"
+#include "Geometry/Geometry.h"
+#include "Geometry/Model.h"
+#include "Geometry/CubeMesh.h"
+#include "Geometry/SkyBoxMesh.h"
+#include "Geometry/SphereMesh.h"
 
 
 #include "imgui/imgui.h"

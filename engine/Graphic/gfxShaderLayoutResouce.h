@@ -2,7 +2,7 @@
 #include "gfxShaderVertex.h"
 #include "gfxShaderPixel.h"
 #include "gfxLayout.h"
-#include "Gemotry.h"
+#include "Geometry.h"
 namespace gfx
 {
 

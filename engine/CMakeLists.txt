@@ -5,14 +5,16 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SOURCES 
   core/*.cpp 
-  Gemotry/*.cpp
+  Geometry/*.cpp
+  Entity/*.cpp
   Graphic/*.cpp
   render/*.cpp
   window/*.cpp
   )
 file(GLOB_RECURSE HEADERS 
   core/*.h
-  Gemotry/*.h
+  Geometry/*.h
+  Entity/*.h
   Graphic/*.h
   render/*.h 
   window/*.h

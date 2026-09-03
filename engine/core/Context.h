@@ -7,6 +7,12 @@ namespace gfx
 
 #pragma pack(push,16)
 
+  struct sWorldMatrix
+  {
+    DirectX::XMMATRIX world;
+    DirectX::XMMATRIX worldInvTranspose;
+  };
+
   struct sVertexConstant
   {
     DirectX::XMMATRIX mvp;

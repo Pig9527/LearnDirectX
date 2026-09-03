@@ -11,4 +11,8 @@ namespace gfx{
   {
     
   }
+  std::string ColorComponent::GetTypeName() const
+  {
+      return "ColorComponent";
+  }
 }

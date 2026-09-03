@@ -6,23 +6,23 @@
 #include "gfxLayout.h"
 #include "gfxContext.h"
 #include "gfxRenderState.h"
-#include "Gemotry.h"
+#include "Geometry.h"
 #include "Renderer.h"
 #include "mesh.h"
-
 namespace gfx
 {
+
   template<typename T>
-  class CubeMesh
+  class SphereMesh
   {
     public:
-    CubeMesh() = default;
-    ~CubeMesh() = default;
+    SphereMesh() = default;
+    ~SphereMesh() = default;
 
-    CubeMesh(const CubeMesh& rhs) =delete;
-    CubeMesh& operator=(const CubeMesh& rhs)= delete;
+    SphereMesh(const SphereMesh& rhs) =delete;
+    SphereMesh& operator=(const SphereMesh& rhs)= delete;
 
-    void Create(const sMeshCreateDesc& meshDesc);
+    void Create(sMeshCreateDesc& meshDesc);
     void Bind();
     void Draw();
 
@@ -30,27 +30,22 @@ namespace gfx
      std::unique_ptr<gfxVertexBuffer<T>> m_pVerticesBuffer;
      std::unique_ptr<gfxIndexBuffer> m_pIndexBuffer;
      std::unique_ptr<gfxTexture> m_pTexture;
-     std::unique_ptr<gfxTexture> m_pNormalTexture;
-     std::unique_ptr<gfxTexture> m_pDiffuseTexture;
-     std::unique_ptr<gfxTexture> m_pSpecularTexture;
      int m_indexCnt;
   };
 
   template <typename T>
-  inline void CubeMesh<T>::Create(const sMeshCreateDesc& meshDesc)
+  inline void SphereMesh<T>::Create(sMeshCreateDesc& meshDesc)
   {
-    GemotryCube cube;
-    cube.Create(2.0f);
+    GeometrySphere sphere;
+    sphere.Create();
     m_pVerticesBuffer = std::make_unique<gfxVertexBuffer<T>>();
-    int sie = sizeof(T);
-    int s = sizeof(VertexPosColorNormalUv);
-    m_pVerticesBuffer->Create(cube.Vertices.size() * sizeof(T),cube.Vertices.data());
+    m_pVerticesBuffer->Create(sphere.Verteices.size() * sizeof(T), sphere.Verteices.data());
 
     m_pIndexBuffer = std::make_unique<gfxIndexBuffer>();
-    m_pIndexBuffer->Create(cube.Indices.size(),cube.Indices.data());
+    m_pIndexBuffer->Create(sphere.Indices.size(), sphere.Indices.data());
+    m_indexCnt = sphere.Indices.size();
 
-    m_indexCnt = cube.Indices.size();
-
+    
     m_pTexture = std::make_unique<gfxTexture>();
     if (meshDesc.type == eTextureType::DDS)
     {
@@ -60,22 +55,17 @@ namespace gfx
     {
       m_pTexture->Create(meshDesc.texFilePath[0]);
     }
-
-    m_pNormalTexture = std::make_unique<gfxTexture>(2);
-    m_pNormalTexture->Create(meshDesc.wTexFilePath[1]);
-
   }
 
   template <typename T>
-  inline void CubeMesh<T>::Bind()
+  inline void SphereMesh<T>::Bind()
   {
     m_pVerticesBuffer->Bind();
     m_pIndexBuffer->Bind();
     m_pTexture->Bind();
-    m_pNormalTexture->Bind();
   }
   template <typename T>
-  inline void CubeMesh<T>::Draw()
+  inline void SphereMesh<T>::Draw()
   {
     Renderer::DrawIndex(m_indexCnt);
   }

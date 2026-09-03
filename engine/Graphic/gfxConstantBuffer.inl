@@ -4,7 +4,8 @@
 namespace gfx
 {
   template<typename T>
-  gfxConstantBuffer<T>::gfxConstantBuffer()
+  gfxConstantBuffer<T>::gfxConstantBuffer(int slot /*= 1*/)
+   :m_Slot(slot)
   {
 
   }
@@ -28,7 +29,7 @@ namespace gfx
     desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
     context.m_pDevice->CreateBuffer(&desc,nullptr,m_pBuffer.GetAddressOf());
-    
+    context.m_pDeviceContext->VSSetConstantBuffers(m_Slot,1,m_pBuffer.GetAddressOf());
   }
 
   template <typename T>

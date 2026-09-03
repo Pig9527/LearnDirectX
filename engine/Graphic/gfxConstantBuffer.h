@@ -14,7 +14,7 @@ namespace gfx
   class gfxConstantBuffer
   {
     public:
-      gfxConstantBuffer();
+      gfxConstantBuffer(int slot = 1);
       ~gfxConstantBuffer();
       gfxConstantBuffer(const gfxConstantBuffer& rhs) = delete;
       gfxConstantBuffer& operator=(const gfxConstantBuffer& rhs) = delete;
@@ -26,6 +26,7 @@ namespace gfx
       comptr<ID3D11Buffer>& GetBuffer(){return m_pBuffer;}
 
     private:
+      int m_Slot;
       comptr<ID3D11Buffer> m_pBuffer;
   };
 } // namespace gfx

@@ -11,6 +11,7 @@ namespace gfx
       ColorComponent();
       ColorComponent(const DirectX::XMFLOAT4& color);
 
+      std::string GetTypeName() const override;
 
     DirectX::XMFLOAT4 Color;
     

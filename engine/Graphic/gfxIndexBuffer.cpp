@@ -9,6 +9,8 @@ void gfx::gfxIndexBuffer::Create(uint32_t cnt, void *data)
   desc.Usage = D3D11_USAGE_IMMUTABLE;
   D3D11_SUBRESOURCE_DATA db = {};
   db.pSysMem = data;
+
+  m_IndexCnt = cnt;
   HR(context.m_pDevice->CreateBuffer(&desc,&db,m_pBuffer.GetAddressOf()));
 
 }
