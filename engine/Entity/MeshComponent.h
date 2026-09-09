@@ -1,3 +1,4 @@
+#pragma once
 #include "pheader.h"
 #include "Component.h"
 #include "gfxVertexBuffer.h"
@@ -33,7 +34,13 @@ namespace gfx
     bool bCastShadow;
     bool bReceiveShadows;
 
-    std::shared_ptr<gfxVertexBuffer<VertexPosColorNormalUv>> m_pVerticesBuffer;
+    std::shared_ptr<gfxVertexBuffer<VertexPosColorNormalUvTangent>> m_pVerticesBufferNorUvTang;
+    std::shared_ptr<gfxVertexBuffer<VertexPosColorNormalUv>> m_pVerticesBufferNormalUv;
+    std::shared_ptr<gfxVertexBuffer<DirectX::XMFLOAT3>> m_pVertexPosBuffer;
+    std::shared_ptr<gfxVertexBuffer<DirectX::XMFLOAT4>> m_pVertexColorBuffer;
+    std::shared_ptr<gfxVertexBuffer<DirectX::XMFLOAT3>> m_pVertexNormalBuffer;
+    std::shared_ptr<gfxVertexBuffer<DirectX::XMFLOAT2>> m_pVertexTexCoordBuffer;
+    std::shared_ptr<gfxVertexBuffer<DirectX::XMFLOAT4>> m_pVertexTangentBuffer;
     std::shared_ptr<gfxIndexBuffer> m_pIndicesBuffer;
   };
 }

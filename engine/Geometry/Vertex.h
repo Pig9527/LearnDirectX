@@ -110,20 +110,20 @@ namespace gfx
     static inline const uint32_t sLayoutNum = ARRAYSIZE(sLayout);
   };
 
-  struct VertexPosNormalUvTangent
+  struct VertexPosColorNormalUvTangent
   {
-    DirectX::XMFLOAT3 pos;
+    DirectX::XMFLOAT3 position;
     DirectX::XMFLOAT4 color;
     DirectX::XMFLOAT3 normal;
     DirectX::XMFLOAT2 uv;
     DirectX::XMFLOAT4 tangent;
 
-    VertexPosNormalUvTangent()
-      :pos(DirectX::XMFLOAT3{0.0f,0.0f,0.0f})
+    VertexPosColorNormalUvTangent()
+      :position(DirectX::XMFLOAT3{0.0f,0.0f,0.0f})
       ,color(DirectX::XMFLOAT4{1.0f,1.0f,1.0f,1.0f})
       ,normal(DirectX::XMFLOAT3{0.0f,0.0f,0.0f})
       ,uv(DirectX::XMFLOAT2{0.0f,0.0f})
-      ,tangent(DirectX::XMFLOAT4{0.0f,0.0f,0.0f,0.0f})
+      ,tangent(DirectX::XMFLOAT4{0.0f,0.0f,0.0f,1.0f})
     {}
     
     static inline D3D11_INPUT_ELEMENT_DESC sLayout[5] = {

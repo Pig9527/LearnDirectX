@@ -37,26 +37,26 @@ namespace gfx
   };
 
   inline uint64_t Entity::s_nextID = 1;
-  Entity::Entity()
+  inline Entity::Entity()
   :m_id(s_nextID++)
   {}
-  Entity::Entity(const std::string& name)
+  inline  Entity::Entity(const std::string& name)
   :m_name(name),m_id(s_nextID++)
   {}
 
-  Entity::~Entity()
+  inline Entity::~Entity()
   {
     ClearComponents();
   }
 
-  void Entity::Update()
+  inline void Entity::Update()
   {
     for(auto& comp : m_components)
     {
       comp->Update();
     }
   }
-  void Entity::ClearComponents()
+  inline void Entity::ClearComponents()
   {
     for(auto& comp : m_components)
     {

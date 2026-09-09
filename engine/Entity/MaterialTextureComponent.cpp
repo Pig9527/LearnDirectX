@@ -9,17 +9,21 @@ namespace gfx
     {
     }
 
-    MaterialTextureComponent::MaterialTextureComponent(const std::wstring &wfilePath)
-      :MaterialType(eTextureMaterialType::Material)
+    MaterialTextureComponent::MaterialTextureComponent(const std::wstring &wfilePath,float repeat/*=1.0f*/, int slot ,eTextureMaterialType type)
+      :MaterialType(type)
       ,Type(eTextureType::DDS)
       ,wFilePath(wfilePath)
+      ,TextureRepeat(repeat)
+      ,Slot(slot)
     {
     }
 
-    MaterialTextureComponent::MaterialTextureComponent(const std::string &filePath)
-      :MaterialType(eTextureMaterialType::Material)
+    MaterialTextureComponent::MaterialTextureComponent(const std::string &filePath,float repeat/*=1.0f*/, int slot , eTextureMaterialType type)
+      :MaterialType(type)
       ,Type(eTextureType::other)
       ,FilePath(filePath)
+      ,TextureRepeat(repeat)
+      ,Slot(slot)
     {
     }
 

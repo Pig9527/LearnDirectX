@@ -86,6 +86,11 @@ namespace gfx
   void GeometryPlane::GeneratePlane()
   {
     Vertices.resize(4);
+    VertexPos.resize(4);
+    VertexColor.resize(4);
+    VertexNormal.resize(4);
+    VertexTexCoord.resize(4);
+    VertexTangent.resize(4);
     Indices.resize(6);
     float width ;
     Size.x == Size.z ? width = std::max(Size.x,Size.z): width = Size.x;
@@ -116,6 +121,36 @@ namespace gfx
     Vertices[1].uv = DirectX::XMFLOAT2{1.0f, 1.0f};
     Vertices[2].uv = DirectX::XMFLOAT2{1.0f, 0.0f};
     Vertices[3].uv = DirectX::XMFLOAT2{0.0f, 0.0f};
+
+    Vertices[0].tangent = DirectX::XMFLOAT4{ 1.0f, 0.0f,0.0f,1.0f };
+    Vertices[1].tangent = DirectX::XMFLOAT4{ 1.0f, 0.0f,0.0f,1.0f };
+    Vertices[2].tangent = DirectX::XMFLOAT4{ 1.0f, 0.0f,0.0f,1.0f };
+    Vertices[3].tangent = DirectX::XMFLOAT4{ 1.0f, 0.0f,0.0f,1.0f };
+
+    VertexPos[0] = DirectX::XMFLOAT3{ Position.x - halfWidth, Position.y, Position.z + halfWidth };
+    VertexPos[0] = DirectX::XMFLOAT3{ Position.x + halfWidth, Position.y, Position.z + halfWidth };
+    VertexPos[0] = DirectX::XMFLOAT3{ Position.x + halfWidth, Position.y, Position.z - halfWidth };
+    VertexPos[0] = DirectX::XMFLOAT3{ Position.x - halfWidth, Position.y, Position.z - halfWidth };
+
+    VertexColor[0] = DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f };
+    VertexColor[1] = DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f };
+    VertexColor[2] = DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f };
+    VertexColor[3] = DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f };
+
+    VertexNormal[0] = DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f };
+    VertexNormal[1] = DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f };
+    VertexNormal[2] = DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f };
+    VertexNormal[3] = DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f };
+
+    VertexTexCoord[0] = DirectX::XMFLOAT2{ 0.0f, 1.0f };
+    VertexTexCoord[1] = DirectX::XMFLOAT2{ 1.0f, 1.0f };
+    VertexTexCoord[2] = DirectX::XMFLOAT2{ 1.0f, 0.0f };
+    VertexTexCoord[3] = DirectX::XMFLOAT2{ 0.0f, 0.0f };
+
+    VertexTangent[0] = DirectX::XMFLOAT4{ 1.0f, 0.0f,0.0f ,1.0f };
+    VertexTangent[1] = DirectX::XMFLOAT4{ 1.0f, 0.0f,0.0f ,1.0f };
+    VertexTangent[2] = DirectX::XMFLOAT4{ 1.0f, 0.0f,0.0f ,1.0f };
+    VertexTangent[3] = DirectX::XMFLOAT4{ 1.0f, 0.0f,0.0f ,1.0f };
 
     Indices[0] = 0;
     Indices[1] = 1;

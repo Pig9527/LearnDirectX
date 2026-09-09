@@ -1,6 +1,7 @@
 #pragma once
 #include "pheader.h"
 #include "gfxShader.h"
+#include "gfxcontext.h"
 namespace gfx
 {
   template<typename T>

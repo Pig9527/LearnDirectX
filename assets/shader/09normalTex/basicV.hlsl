@@ -1,10 +1,4 @@
 
-cbuffer cWorldMatrix:register(b3)
-{
-  matrix gWorld;
-  matrix gWordlInvTranspose;
-};
-
 cbuffer vertexConstant:register(b0)
 {
   matrix mvp;
@@ -32,19 +26,20 @@ struct pixelIn
 };
 
 pixelIn vsMain(vertexIn vIn)
-{
-
-  pixelIn pIn;
-  //n.position = mul(float4(vIn.position,1.0f),mvp);
+{  
   //float4 worldPos = mul(float4(vIn.position,1.0f),gWorld);
   //float4 viewPos = mul(worldPos,view);
   //float4 clipPos = mul(viewPos,project);
-  pIn.position = mul(mul(mul(float4(vIn.position, 1.0), gWorld), view), project);
+  //pIn.position = mul(mul(mul(float4(vIn.position, 1.0), world), view), project);
+
+
+  pixelIn pIn;
+  pIn.position = mul(float4(vIn.position,1.0f),mvp);
 
   pIn.color = vIn.color;
-  float4 poW = mul(float4(vIn.position,1.0f),gWorld);
+  float4 poW = mul(float4(vIn.position,1.0f),world);
   pIn.positionW = poW.xyz;
-  pIn.normal = vIn.normal;
+  pIn.normal = mul(vIn.normal,(float3x3)worldInvTranspose);;
   pIn.texCoord = vIn.texCoord;
   return pIn;
 

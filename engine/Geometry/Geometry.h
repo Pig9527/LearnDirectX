@@ -14,10 +14,16 @@ namespace gfx
   
   struct GeometryPlane
   {
-    std::vector<VertexPosColorNormalUv> Vertices;
+    std::vector<VertexPosColorNormalUvTangent> Vertices;
     std::vector<uint32_t> Indices;
     DirectX::XMFLOAT3 Position{0.0f,0.0f,0.0f};
     DirectX::XMFLOAT3 Size{1.0f,1.0f,1.0f};
+
+    std::vector<DirectX::XMFLOAT3> VertexPos;
+    std::vector<DirectX::XMFLOAT4> VertexColor;
+    std::vector<DirectX::XMFLOAT3> VertexNormal;
+    std::vector<DirectX::XMFLOAT2> VertexTexCoord;
+    std::vector<DirectX::XMFLOAT4> VertexTangent;
 
     void GeneratePlane();
   };

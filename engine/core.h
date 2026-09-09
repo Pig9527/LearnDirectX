@@ -1,7 +1,9 @@
+#pragma once
 #include "core/Application.h"
 #include "core/Camera.h"
 #include "core/ImguiLayer.h"
 #include "core/Context.h"
+#include "core/World.h"
 
 #include "Graphic/gfxRenderState.h"
 #include "Graphic/gfxContext.h"
@@ -15,6 +17,7 @@
 #include "Graphic/gfxWhitetexture.h"
 #include "Graphic/gfxConstBufferMag.h"
 #include "Graphic/gfxShaderLayoutResouce.h"
+#include "Graphic/gfxResource.h"
 
 #include "Entity/Entity.h"
 #include "Entity/Component.h"
@@ -24,6 +27,7 @@
 #include "Entity/MaterialTextureComponent.h"
 #include "Entity/LightComponent.h"
 #include "Entity/ColorComponent.h"
+#include "Entity/ShaderComponent.h"
 
 
 #include "render/Renderer.h"

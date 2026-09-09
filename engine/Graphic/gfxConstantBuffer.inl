@@ -9,7 +9,12 @@ namespace gfx
   {
 
   }
+  template<typename T>
+  gfx::gfxConstantBuffer<T>::gfxConstantBuffer(const CONST_BUFFER_DESC_STRUCT& desc)
+    :m_Desc(desc)
+  {
 
+  }
   template <typename T>
   gfxConstantBuffer<T>::~gfxConstantBuffer()
   {
@@ -29,7 +34,18 @@ namespace gfx
     desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
     context.m_pDevice->CreateBuffer(&desc,nullptr,m_pBuffer.GetAddressOf());
-    context.m_pDeviceContext->VSSetConstantBuffers(m_Slot,1,m_pBuffer.GetAddressOf());
+    switch (m_Desc.type)
+    {
+      case CONST_BUFFER_TYPE::VS:
+      {
+        context.m_pDeviceContext->VSSetConstantBuffers(m_Desc.slot, 1, m_pBuffer.GetAddressOf());
+      }break;
+      case  CONST_BUFFER_TYPE::PS:
+      {
+        context.m_pDeviceContext->PSSetConstantBuffers(m_Desc.slot, 1, m_pBuffer.GetAddressOf());
+      }break;
+    }
+
   }
 
   template <typename T>

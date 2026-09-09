@@ -1,3 +1,4 @@
+#pragma once
 #include "pheader.h"
 #include "gfxVertexBuffer.h"
 #include "gfxIndexBuffer.h"

@@ -90,6 +90,7 @@ void gfx::Camera::Update(float dt)
   calcualteVector();
   calculateProjectView();
   Context::sMouseWheel = 0.0f;
+  memcpy(&Context::CameraPos.x, &m_position.x, sizeof(DirectX::XMFLOAT3));
 }
 
 void gfx::Camera::OnEvent(Event &e)

@@ -1,129 +1,15 @@
 #include "core.h"
 
-//gfx::CubeMesh<gfx::VertexPosColorNormalUv> cube;
-gfx::SphereMesh<gfx::VertexPosColorNormalUv> sphere;
-
-gfx::SkyBoxMesh<gfx::VertexPosColorNormalUv> skybox;
-gfx::gfxShaderLayoutResouce<gfx::VertexPosColorNormalUv> cubeShaderLayout;
-gfx::gfxShaderLayoutResouce<gfx::VertexPosColorNormalUv> skyboxShaderLayout;
-gfx::Camera camera;
-gfx::gfxConstBufferMag constMag;
-gfx::gfxRenderStateCache renderstate;
-
-char* skyTexturePath[] = {
-  "assets/texture/skybox/right.jpg",
-  "assets/texture/skybox/left.jpg",
-  "assets/texture/skybox/top.jpg",
-  "assets/texture/skybox/bottom.jpg",
-  "assets/texture/skybox/front.jpg",
-  "assets/texture/skybox/back.jpg"
-};
-
-char* skyshaderFilePath[] = {
-  "assets/shader/skybox/skyboxV.hlsl",
-  "assets/shader/skybox/skyboxP.hlsl"
-};
-
-gfx::sMeshCreateDesc cubeDesc 
-{
-  
-  {L"assets/texture/floor.dds",L"assets/texture/floor_nmap.dds",L"",L""},
-};
-
-gfx::sMeshCreateDesc sphereDesc
-{
-  {L"assets/texture/floor.dds",L"assets/texture/floor_nmap.dds",L"",L""},
-  {"assets/texture/awesomeface.png","assets/texture/floor_nmap.dds","",""},
-  gfx::eTextureType::other
-};
-
-//std::shared_ptr<gfx::Entity> cube;
-std::vector<std::shared_ptr<gfx::Entity>> scenes;
+std::unique_ptr<gfx::World> pWorld;
 
 void Render()
 {
 
   gfx::Renderer::Clear();
+  pWorld->Update();
 
-  ImGuiIO& io = ImGui::GetIO();
-  if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
-  {
-    camera.Rotate(io.MouseDelta.y * 0.01f, io.MouseDelta.x * 0.01f);
-  }
+  gfx::ImguiLayer::RenderDefMaterial();
 
-  camera.Update(0.16f);
-
-  constMag.SetConstMVP(&camera);
-  constMag.Upload2VS();
-  constMag.Upload2PS();
-
-  renderstate.SetDepthStencilState(gfx::DepthStencilState::LESSEQU);
-  skybox.Bind();
-  skybox.Draw();
-
-  renderstate.SetDepthStencilState(gfx::DepthStencilState::Default);
-  cubeShaderLayout.Bind();
-  gfx::Context::sVertexConstantMVP.World = DirectX::XMMatrixTranspose(
-    DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f) * DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f));
-  constMag.SetConstMVP(&camera);
-  constMag.Upload2VS();
-
-  for(auto& entity:scenes)
-  {
-    auto& transform = entity->GetComponent<gfx::TransformComponent>();
-    auto& mesh = entity->GetComponent<gfx::MeshComponent>();
-    /*gfx::Context::sVertexConstantMVP.World = DirectX::XMMatrixTranspose(
-      DirectX::XMMatrixTranslation(transform->Position.x, transform->Position.y, transform->Position.z) *
-      DirectX::XMMatrixScaling(transform->Scale.x, transform->Scale.y, transform->Scale.z));
-    */
-    if (mesh->MeshType == gfx::MeshComponent::eMeshType::Sphere)
-    {
-      static float speed = 0.016f;
-      if (transform->Position.y > 8.0f)
-      {
-        speed = -0.001;
-      }
-      else if (transform->Position.y < 5.0f)
-      {
-        speed = 0.001;
-      }
-      transform->Position.y += speed;
-    }
-
-    gfx::Context::sWorld.world = DirectX::XMMatrixTranspose(
-      DirectX::XMMatrixTranslation(transform->Position.x, transform->Position.y, transform->Position.z) *
-      DirectX::XMMatrixScaling(transform->Scale.x, transform->Scale.y, transform->Scale.z));
-    gfx::Context::sWorld.worldInvTranspose = DirectX::XMMatrixTranspose(
-      DirectX::XMMatrixInverse(nullptr, gfx::Context::sWorld.world)
-    );
-    constMag.SetConstMVP(&camera);
-    constMag.Upload2VS();
-
-    if (mesh->MeshType == gfx::MeshComponent::eMeshType::Plane)
-    {
-      gfx::Context::sTextureTell.telling = 10.0f;
-    }
-    else
-    {
-      gfx::Context::sTextureTell.telling = 1.0f;
-    }
-    constMag.UploadTex();
-    entity->Update();
-  }
-  //cube->Update();
-  // cube.Bind();
-  // cube.Draw();
-
-
-  // gfx::Context::sVertexConstantMVP.World = DirectX::XMMatrixTranspose( DirectX::XMMatrixTranslation(0.0f,2.5f,0.0f) *
-  //  DirectX::XMMatrixScaling(1.0f,1.0f,1.0f));
-  // constMag.SetConstMVP(&camera);
-  // constMag.Upload2VS();
-  // sphere.Bind();
-  // sphere.Draw();
-  gfx::ImguiLayer::Begin("setting");
-
-  gfx::ImguiLayer::End();
 
   gfx::Renderer::Present();
 }
@@ -135,6 +21,32 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   app.RenderCallback = Render;
 
   app.Init(TEXT("normal"));
+
+  gfx::WORLD_DESC desc;
+  desc.bEnableSkyBox = true;
+  desc.pSkyBoxTexturePath[0] = "assets/texture/skybox/right.jpg";
+  desc.pSkyBoxTexturePath[1] = "assets/texture/skybox/left.jpg";
+  desc.pSkyBoxTexturePath[2] = "assets/texture/skybox/top.jpg";
+  desc.pSkyBoxTexturePath[3] = "assets/texture/skybox/bottom.jpg";
+  desc.pSkyBoxTexturePath[4] = "assets/texture/skybox/front.jpg";
+  desc.pSkyBoxTexturePath[5] = "assets/texture/skybox/back.jpg";
+
+  desc.pSkyBoxShaderPath[0] = "assets/shader/09normalTex/skyboxV.hlsl";
+  desc.pSkyBoxShaderPath[1] = "assets/shader/09normalTex/skyboxP.hlsl";
+  pWorld = std::make_unique<gfx::World>(desc);
+  pWorld->Create();
+
+  gfx::sShader_desc shaderDesc;
+  shaderDesc.VertexPath = "assets/shader/09normalTex/basicV.hlsl";
+  shaderDesc.PixelPath = "assets/shader/09normalTex/basicP.hlsl";
+  shaderDesc.Type = gfx::VertexType::POS_COLOR_NORMAL_UV;
+  gfx::gfxResource::Get().AddShader("basic",shaderDesc);
+
+  shaderDesc.VertexPath =  "assets/shader/09normalTex/normalMapV.hlsl";
+  shaderDesc.PixelPath =  "assets/shader/09normalTex/normalMapP.hlsl";
+  shaderDesc.Type = gfx::VertexType::POS_COLOR_NORMAL_UV_TANGENT;
+  gfx::gfxResource::Get().AddShader("normal",shaderDesc);
+
 #define PLANE_WIDTH  20.0f
 
   DirectX::XMFLOAT3 cylinderPos[] =
@@ -149,60 +61,17 @@ int WINAPI wWinMain(HINSTANCE hInstacne, HINSTANCE hPreinstance, LPTSTR cmdline,
   std::shared_ptr<gfx::Entity> plane;
   plane = std::make_shared<gfx::Entity>("plane");
   plane->AddComponent<gfx::TransformComponent>(DirectX::XMFLOAT3{ 0.0f,-1.0f,0.0f }, DirectX::XMFLOAT3{ PLANE_WIDTH,1.0f,PLANE_WIDTH });
-  plane->AddComponent<gfx::MaterialTextureComponent>(L"assets/texture/floor.dds");
+  plane->AddComponent<gfx::MaterialTextureComponent>(L"assets/texture/stones.dds",5.0f);
+  plane->AddComponent<gfx::MaterialTextureComponent>(L"assets/texture/stones_nmap.dds",
+    5.0f,2,gfx::MaterialTextureComponent::eTextureMaterialType::Normal);
+
   plane->AddComponent<gfx::MeshComponent>(gfx::MeshComponent::eMeshType::Plane);
-  scenes.push_back(plane);
+  plane->AddComponent<gfx::ShaderComponent>("normal");
+  pWorld->Add(plane);
 
-  for (size_t i = 0; i < 5; i++)
-  {
-    std::shared_ptr<gfx::Entity> sphere;
-    sphere = std::make_shared<gfx::Entity>("sphere");
-    sphere->AddComponent<gfx::TransformComponent>(DirectX::XMFLOAT3{cylinderPos[i].x,cylinderPos[i].y + 4.0f,cylinderPos[i].z});
-    sphere->AddComponent<gfx::MaterialTextureComponent>(L"assets/texture/stone.dds");
-    sphere->AddComponent<gfx::MeshComponent>(gfx::MeshComponent::eMeshType::Sphere);
-    scenes.push_back(sphere);
 
-  }
 
-  for (size_t i = 0; i < 5; i++)
-  {
-    std::shared_ptr<gfx::Entity> cylinder;
-    cylinder = std::make_shared<gfx::Entity>("cylinder");
-    cylinder->AddComponent<gfx::TransformComponent>(cylinderPos[i]);
-    cylinder->AddComponent<gfx::MaterialTextureComponent>(L"assets/texture/stone.dds");
-    cylinder->AddComponent<gfx::MeshComponent>(gfx::MeshComponent::eMeshType::Cylinder);
-    scenes.push_back(cylinder);
-    // std::shared_ptr<gfx::Entity> cube;
-    // cube = std::make_shared<gfx::Entity>("cube");
-    // cube->AddComponent<gfx::TransformComponent>(DirectX::XMFLOAT3{i * 0.0f,i*0.0f,0.0f});
-    // cube->AddComponent<gfx::MaterialTextureComponent>(L"assets/texture/floor.dds");
-    // cube->AddComponent<gfx::MeshComponent>(gfx::MeshComponent::eMeshType::Cube);
-
-    // scenes.push_back(cube);
-  }
   
-
-
-
-
-
-  renderstate.Init();
-
-  renderstate.SetDepthStencilState(gfx::DepthStencilState::LESSEQU);
-  renderstate.SetRasteriazerState(gfx::RasterizerState::CullNone);
-  //renderstate.SetRasteriazerState(gfx::RasterizerState::WireFrame);
-  renderstate.SetSampleState(gfx::SamplerState::LinearWrap);
-  constMag.Init();
-  camera.Init();
-
- // cube.Create(cubeDesc);
-
-
-  skybox.Create(skyTexturePath, skyshaderFilePath);
-  //sphere.Create(sphereDesc);
-
-  cubeShaderLayout.Create("assets/shader/09noramlTex/basicV.hlsl","assets/shader/09noramlTex/basicP.hlsl");
-  //skyboxShaderLayout.Create();
 
   app.Run();
 

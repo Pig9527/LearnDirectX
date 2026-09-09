@@ -38,7 +38,27 @@ namespace gfx
       DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f)
     }
   };
-  sSpotLight  Context::arrSpotLight[32];
-  sPointLight  Context::arrPointLight[32];
+  sSpotLight  Context::arrSpotLight[32]={
+    {
+      DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f },
+      DirectX::XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f },
+      DirectX::XMFLOAT4{ 0.5f, 0.5f, 0.5f, 1.0f },
+      DirectX::XMFLOAT3{0.0f, 5.0f, 0.0f},
+      50.0f,
+      DirectX::XMFLOAT3{0.0f,-1.0f,0.0f}
+    }
+
+  };
+  sPointLight  Context::arrPointLight[32] ={
+    {
+      DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f },
+      DirectX::XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f },
+      DirectX::XMFLOAT4{ 0.5f, 0.5f, 0.5f, 1.0f },
+      DirectX::XMFLOAT3{0.0f, 5.0f, 0.0f},
+      50.0f,
+      DirectX::XMFLOAT3{0.0f,-1.0f,0.0f}
+    }
+
+  };
 
 } // namespace gfx

@@ -7,7 +7,7 @@ namespace gfx
   class MaterialComponent
     :public Component
   {
-    public:
+  public:
     MaterialComponent();
     sMaterial Material;
   };
